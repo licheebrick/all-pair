@@ -117,9 +117,9 @@ void Network::dfs_search(uint32_t router, uint32_t destiny, std::set<uint64_t> r
         uint64_t port_num = routers[router].router_to_port.at(i);
         if(topology.find(port_num) != topology.end())
         {
-            uint64_t new_port_num = topology[port_num];
+            uint64_t next_port_num = topology[port_num];
             //有这条边
-            if(have_been[port_to_router[new_port_num]])
+            if(have_been[port_to_router[next_port_num]])
                 continue;
             //如果到过了就GG
             std::set<uint64_t> new_match;
@@ -131,7 +131,7 @@ void Network::dfs_search(uint32_t router, uint32_t destiny, std::set<uint64_t> r
             if(new_match.empty())
                 continue;
             //如果不为空则可达
-            if(port_to_router[new_port_num] == destiny)
+            if(port_to_router[next_port_num] == destiny)
             {
                 router_stack[stack_place++] = destiny;
                 display_result(new_match);
@@ -139,11 +139,11 @@ void Network::dfs_search(uint32_t router, uint32_t destiny, std::set<uint64_t> r
             }
             else
             {
-                router_stack[stack_place++] = port_to_router[new_port_num];
-                have_been[port_to_router[new_port_num]] = true;
-                dfs_search(port_to_router[new_port_num], destiny, new_match);
+                router_stack[stack_place++] = port_to_router[next_port_num];
+                have_been[port_to_router[next_port_num]] = true;
+                dfs_search(port_to_router[next_port_num], destiny, new_match);
                 router_stack[stack_place--] = -1;
-                have_been[port_to_router[new_port_num]] = false;
+                have_been[port_to_router[next_port_num]] = false;
             }
             //如果刚好到了终点则输出
         }
