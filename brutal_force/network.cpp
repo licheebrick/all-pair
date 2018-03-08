@@ -37,12 +37,6 @@ void Network::init()
     printf("finish writing rules!!\n");
     
     //write port_to_router
-    add_link(1,3);
-    add_link(2,6);
-    add_link(4,7);
-    add_link(5,10);
-    add_link(8,9);
-
     add_port_to_router(1,0);
     add_port_to_router(2,0);
     add_port_to_router(3,1);

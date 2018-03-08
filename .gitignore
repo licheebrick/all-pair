@@ -1,2 +1,10 @@
-/exe/
+/brutal_force/exe/
+/brutal_force/CMakeFiles/
+/brutal_force/cmake-build-debug/
+
 *.o
+*.cbp
+*.cmake
+
+all_pair
+CMakeCache.txt

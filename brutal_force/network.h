@@ -38,7 +38,7 @@ private:
     std::map< uint64_t, uint32_t> port_to_router;
     //for dfs search
     bool have_been[router_max] = {false};
-    uint32_t router_stack[router_max] = {-1};
+    uint32_t router_stack[router_max] = {999999};
     uint32_t stack_place = 0;
     Router routers[router_max];
 }; 
