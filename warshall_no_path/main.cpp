@@ -1,6 +1,7 @@
 #include "network.h"
 #include "router.h"
 #include <json/json.h>
+#include <iostream>
 #include <fstream>
 #include <string.h>
 
@@ -8,14 +9,8 @@ using namespace std;
 
 string json_file_path = "./jsonfile";
 
-void write_rules()
+int main(int argc, char* argv[]) 
 {
-
-}
-
-int main(int argc, char* argv[])
-{
-    write_rules();
     Network network_example;
 
     //read topology
@@ -27,9 +22,6 @@ int main(int argc, char* argv[])
     if (!jsfile.good()) 
     {
         cout << "Error opening the file " << file_name << endl;
-        // stringstream err_msg;
-        // LOG4CXX_ERROR(rlogger, err_msg.str()); //fail to use log4cxx
-        // return t_list;
     }
     reader.parse(jsfile, root, false);
     Json::Value topology = root["topology"];
@@ -37,13 +29,12 @@ int main(int argc, char* argv[])
     {
         network_example.add_link(topology[i]["src"].asUInt64(), topology[i]["dst"].asUInt64());
     }
-    //LOG4CXX_DEBUG(flogger, "miaomiaomiao");
     jsfile.close();
 
     network_example.print_topology();
     network_example.init();
-    //network_example.print_topology();
     network_example.all_pair_reachability();
-
+    
+    printf("ready for it!\n");
     return 0;
 }
