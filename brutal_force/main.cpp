@@ -6,6 +6,7 @@
 
 using namespace std;
 
+const int router_num = 4;   //routers num
 string json_file_path = "./jsonfile";
 
 void write_rules()
@@ -16,7 +17,7 @@ void write_rules()
 int main(int argc, char* argv[])
 {
     write_rules();
-    Network network_example;
+    Network network_example(router_num);
 
     //read topology
     ifstream jsfile;

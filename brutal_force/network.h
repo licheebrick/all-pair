@@ -10,13 +10,13 @@
 using namespace std;
 
 const int router_max = 1000;//total
-const int router_num = 4;   //routers num
 const int rule_type = 10;   //假设有10种流量
 
 class Network
 {
 public:
     Network();
+    Network(int num);
     ~Network();
 
     void init();
@@ -40,7 +40,9 @@ private:
     bool have_been[router_max] = {false};
     uint32_t router_stack[router_max] = {999999};
     uint32_t stack_place = 0;
-    Router routers[router_max];
+    Router routers[router_max]; //这边居然不会爆栈。。
+
+    int r_num = 1000;
 }; 
 
 #endif //NETWORK_H

@@ -7,11 +7,12 @@
 
 using namespace std;
 
+const int router_num = 4;
 string json_file_path = "./jsonfile";
 
 int main(int argc, char* argv[]) 
 {
-    Network network_example;
+    Network network_example(router_num);
 
     //read topology
     ifstream jsfile;

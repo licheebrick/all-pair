@@ -15,13 +15,13 @@
 using namespace std;
 
 const int router_max = 1000;//total
-const int router_num = 4;   //routers num
 const int rule_type = 10;   //假设有10种流量
 
 class Network
 {
 public:
     Network();
+    Network(int num);
     ~Network();
 
     void init();
@@ -44,6 +44,12 @@ private:
     uint32_t router_stack[router_max] = {999999};
     uint32_t stack_place = 0;
     Router routers[router_max];
+
+    int r_num = 1000;
+
+    static Reachability rmatrix[router_max][router_max];
+    static Reachability rmatrix1[router_max][router_max];
+    static Reachability rmatrix2[router_max][router_max];
 }; 
 
 #endif //WARSHALL_NO_PATH_NETWORK_H

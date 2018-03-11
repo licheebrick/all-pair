@@ -4,9 +4,18 @@
 
 #include "network.h"
 
+Reachability Network::rmatrix[router_max][router_max];
+Reachability Network::rmatrix1[router_max][router_max];
+Reachability Network::rmatrix2[router_max][router_max];
+
 Network::Network()
 {
+    r_num = 1000;
+}
 
+Network::Network(int num)
+{
+    r_num = num;
 }
 
 Network::~Network()
@@ -99,8 +108,7 @@ void Network::all_pair_reachability()
 {
     //先算一个基本的r0，然后推导到rk
     //后面可以有一个强行减小矩阵的优化
-    Reachability rmatrix[router_num][router_num];
-    for(int i = 0; i < router_num; i++)
+    for(int i = 0; i < r_num; i++)
     {
         std::map< uint64_t, std::set<uint64_t> >::iterator it;
         it = routers[i].port_to_match.begin();
@@ -116,22 +124,21 @@ void Network::all_pair_reachability()
     }
     
     //Todo:进行一个矩阵变换
-    Reachability rmatrix1[router_num][router_num];
-    Reachability rmatrix2[router_num][router_num];
-    for(int i = 0; i < router_num; i++)
+    
+    for(int i = 0; i < r_num; i++)
     {
-        for(int j = 0; j < router_num; j++)
+        for(int j = 0; j < r_num; j++)
         {
             rmatrix2[i][j] = rmatrix[i][j];
         }
     }
-    for(int k = 1; k <= router_num; k++)
+    for(int k = 1; k <= r_num; k++)
     {
         if(k % 2 == 1)
         {
-            for(int i = 0; i < router_num; i++)
+            for(int i = 0; i < r_num; i++)
             {
-                for(int j = 0; j < router_num; j++)
+                for(int j = 0; j < r_num; j++)
                 {
                     rmatrix1[i][j] = rmatrix2[i][j] + (rmatrix2[i][k] * rmatrix2[k][j]);
                 }
@@ -139,9 +146,9 @@ void Network::all_pair_reachability()
         }
         else if(k % 2 == 0)
         {
-            for(int i = 0; i < router_num; i++)
+            for(int i = 0; i < r_num; i++)
             {
-                for(int j = 0; j < router_num; j++)
+                for(int j = 0; j < r_num; j++)
                 {
                     rmatrix2[i][j] = rmatrix1[i][j] + (rmatrix1[i][k] * rmatrix1[k][j]);
                 }
@@ -149,22 +156,22 @@ void Network::all_pair_reachability()
         }
     }
 
-    if(router_num % 2 == 1)
+    if(r_num % 2 == 1)
     {
-        for(int i = 0; i < router_num; i++)
+        for(int i = 0; i < r_num; i++)
         {
-            for(int j = 0; j < router_num; j++)
+            for(int j = 0; j < r_num; j++)
             {
                 printf("matrix: %d : %d \n", i, j);
                 rmatrix1[i][j].show_rules();
             }
         }
     }
-    else if(router_num % 2 == 0)
+    else if(r_num % 2 == 0)
     {
-        for(int i = 0; i < router_num; i++)
+        for(int i = 0; i < r_num; i++)
         {
-            for(int j = 0; j < router_num; j++)
+            for(int j = 0; j < r_num; j++)
             {
                 printf("matrix: %d : %d \n", i, j);
                 rmatrix2[i][j].show_rules();

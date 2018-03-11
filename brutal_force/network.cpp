@@ -2,7 +2,12 @@
 
 Network::Network()
 {
+    r_num = 1000;
+}
 
+Network::Network(int num)
+{
+    r_num = num;
 }
 
 Network::~Network()
@@ -94,9 +99,9 @@ void Network::all_pair_reachability()
         full_array[i] = i + 1;
     }
     std::set<uint64_t> full_rules (full_array, full_array + rule_type);
-    for (int i = 0; i < router_num; i++)
+    for (int i = 0; i < r_num; i++)
     {
-        for(int j = 0; j < router_num; j++)
+        for(int j = 0; j < r_num; j++)
         {
             //from i to j
             printf("~~~~~~~~ search for the path from %d to %d ~~~~~~~~\n", i, j);
