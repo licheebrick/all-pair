@@ -20,9 +20,10 @@ public:
 
     void set_rules(std::set<uint64_t> set_rules);
     std::set<uint64_t> get_rules();
+    void show_rules();
 
-    Reachability operator * (const Reachability &reach);
-    Reachability operator + (const Reachability &reach);
+    Reachability operator * (const Reachability &reach) const;
+    Reachability operator + (const Reachability &reach) const;
 private:
     std::set<uint64_t> rules;
 };
