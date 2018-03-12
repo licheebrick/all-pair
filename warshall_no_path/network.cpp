@@ -108,6 +108,9 @@ void Network::all_pair_reachability()
 {
     //先算一个基本的r0，然后推导到rk
     //后面可以有一个强行减小矩阵的优化
+    bool is_height[router_max] = {false};
+    bool is_width[router_max] = {false};
+
     for(int i = 0; i < r_num; i++)
     {
         std::map< uint64_t, std::set<uint64_t> >::iterator it;
@@ -119,11 +122,44 @@ void Network::all_pair_reachability()
             uint32_t router1 = port_to_router[port_num];
             uint32_t router2 = port_to_router[next_port_num];
             rmatrix[router1][router2].set_rules(it->second);
+            is_height[router1] = true;
+            is_width[router2] = true;
             it ++;    
         }
     }
     
-    //Todo:进行一个矩阵变换
+    //进行一个矩阵变换
+    int minimatrix[router_max][router_max][2];
+    int height = 0;
+    int width = 0;
+    for(int i = 0; i < r_num; i++)
+    {
+        if(!is_height[i])
+        {
+            continue;
+        }
+        width = 0;
+        for(int j = 0; j < r_num; j++)
+        {
+            if(!is_width[j])
+                continue;
+            else
+            {
+                minimatrix[height][width][0] = i;
+                minimatrix[height][width][1] = j;
+                width++;
+            }   
+        }
+        height++;
+    }
+    // printf("h: %d, w: %d\n", height, width);
+    // for(int i = 0; i < height; i++)
+    // {
+    //     for(int j = 0; j < width; j++)
+    //     {
+    //         printf("(%d, %d)\n", minimatrix[i][j][0], minimatrix[i][j][1]);
+    //     }
+    // }
     
     for(int i = 0; i < r_num; i++)
     {
@@ -133,24 +169,26 @@ void Network::all_pair_reachability()
         }
     }
     for(int k = 1; k <= r_num; k++)
-    {
+    {   
         if(k % 2 == 1)
         {
-            for(int i = 0; i < r_num; i++)
+            for(int i = 0; i < height; i++)
             {
-                for(int j = 0; j < r_num; j++)
+                for(int j = 0; j < width; j++)
                 {
-                    rmatrix1[i][j] = rmatrix2[i][j] + (rmatrix2[i][k] * rmatrix2[k][j]);
+                    rmatrix1[minimatrix[i][j][0]][minimatrix[i][j][1]] = rmatrix2[minimatrix[i][j][0]][minimatrix[i][j][1]] 
+                                                                            + (rmatrix2[minimatrix[i][j][0]][k] * rmatrix2[k][minimatrix[i][j][1]]);
                 }
             }
         }
         else if(k % 2 == 0)
         {
-            for(int i = 0; i < r_num; i++)
+            for(int i = 0; i < height; i++)
             {
-                for(int j = 0; j < r_num; j++)
+                for(int j = 0; j < width; j++)
                 {
-                    rmatrix2[i][j] = rmatrix1[i][j] + (rmatrix1[i][k] * rmatrix1[k][j]);
+                    rmatrix2[minimatrix[i][j][0]][minimatrix[i][j][1]] = rmatrix1[minimatrix[i][j][0]][minimatrix[i][j][1]] 
+                                                                            + (rmatrix1[minimatrix[i][j][0]][k] * rmatrix1[k][minimatrix[i][j][1]]);
                 }
             }
         }
