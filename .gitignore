@@ -1,10 +1,15 @@
 /brutal_force/exe/
 /brutal_force/CMakeFiles/
 /brutal_force/cmake-build-debug/
+/warshall_no_path/exe/
+/warshall_no_path/CMakeFiles/
+/warshall_no_path/cmake-build-debug/
+/warshall_no_path/.idea/
 
 *.o
 *.cbp
 *.cmake
 
+settings.json
 all_pair
 CMakeCache.txt
