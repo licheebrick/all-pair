@@ -12,6 +12,10 @@ string json_file_path = "./jsonfile";
 
 int main(int argc, char* argv[]) 
 {
+    int flag = 0;
+    printf("Which one?\n");
+    cin >> flag;
+    
     Network network_example(router_num);
 
     //read topology
@@ -34,8 +38,12 @@ int main(int argc, char* argv[])
 
     network_example.print_topology();
     network_example.init();
-    network_example.all_pair_reachability();
+    if(flag == 1)
+        network_example.brutal_force();
+    else if(flag == 2)
+        network_example.warshall_no_path();
+    else
+        printf("??????????????\n");
     
-    printf("ready for it!\n");
     return 0;
 }

@@ -1,4 +1,12 @@
+//
+// Created by mac on 2018/3/9.
+//
+
 #include "network.h"
+
+Reachability Network::rmatrix[router_max][router_max];
+Reachability Network::rmatrix1[router_max][router_max];
+Reachability Network::rmatrix2[router_max][router_max];
 
 Network::Network()
 {
@@ -38,6 +46,12 @@ void Network::init()
     routers[1].port_to_match[5] = portset5;
     std::set<uint64_t> portset8 (port8, port8 + 2);
     routers[2].port_to_match[8] = portset8;
+
+    Reachability reach1;
+    Reachability reach2;
+    Reachability reach3;
+    reach3 = reach1 * reach2;
+    reach3 = reach1 + reach2;
 
     printf("finish writing rules!!\n");
     
@@ -85,19 +99,18 @@ void Network::print_port_to_router()
     it = port_to_router.begin();
     while(it !=port_to_router.end())
     {
-        printf("from port %llu to router %lu\n", it->first, it->second);
+        printf("from port %llu to router %d\n", it->first, it->second);
         it ++;         
     }
 }
 
-void Network::all_pair_reachability()
+void Network::brutal_force()
 {
-    //还是递归吧
+    //递归
     uint64_t full_array[rule_type];
     for (int i = 0; i < rule_type; i++)
-    {
         full_array[i] = i + 1;
-    }
+
     std::set<uint64_t> full_rules (full_array, full_array + rule_type);
     for (int i = 0; i < r_num; i++)
     {
@@ -118,14 +131,12 @@ void Network::all_pair_reachability()
 void Network::dfs_search(uint32_t router, uint32_t destiny, std::set<uint64_t> rules)
 {
     //我们默认它进入这个函数是不可能相同的
-
     std::map< uint64_t, std::set<uint64_t> >::iterator it;
     it = routers[router].port_to_match.begin();
     while(it != routers[router].port_to_match.end())
     {
         uint64_t port_num = it->first;
         uint64_t next_port_num = topology[port_num];
-
         //有这条边
         if(have_been[port_to_router[next_port_num]])
             continue;
@@ -153,7 +164,6 @@ void Network::dfs_search(uint32_t router, uint32_t destiny, std::set<uint64_t> r
             have_been[port_to_router[next_port_num]] = false;
         }
         //如果刚好到了终点则输出
-
         it ++;         
     }
 }
@@ -163,52 +173,125 @@ void Network::display_result(std::set<uint64_t> rules)
     //display the path and match
     printf("This path includes router: ");
     for(int i = 0; i < stack_place; i++)
-    {
         printf("%d ", router_stack[i]);
-    }
+
     printf("with rules: ");
     std::set<uint64_t>::iterator it;
     for(it = rules.begin(); it != rules.end(); it++)
-    {
-        cout<< *it << " ";
-    } 
+        printf("%llu ", *it);
     printf("\n");
 }
 
-void Network::display_rules(std::set<uint64_t> rules)
+void Network::warshall_no_path()
 {
-    printf("Rules: \n");
-    std::set<uint64_t>::iterator it;
-    for(it = rules.begin(); it != rules.end(); it++)
-    {
-        cout<< *it << " ";
-    } 
-    printf("\n");
-}
+    //先算一个基本的r0，然后推导到rk
+    //后面可以有一个强行减小矩阵的优化
+    bool is_height[router_max] = {false};
+    bool is_width[router_max] = {false};
 
-void Network::display_data(int type)
-{
-    printf("---> display <---\n");
-    if(type == 0)
+    for(int i = 0; i < r_num; i++)
     {
-        printf("topology: \n");
-        std::map<uint64_t, uint64_t>::iterator it;
-        it = topology.begin();
-        while(it !=topology.end())
+        std::map< uint64_t, std::set<uint64_t> >::iterator it;
+        it = routers[i].port_to_match.begin();
+        while(it != routers[i].port_to_match.end())
         {
-            //it->first;
-            //it->second;
-            printf("from %d to %d\n", it->first, it->second);
-            it ++;         
+            uint64_t port_num = it->first;
+            uint64_t next_port_num = topology[port_num];
+            uint32_t router1 = port_to_router[port_num];
+            uint32_t router2 = port_to_router[next_port_num];
+            rmatrix[router1][router2].set_rules(it->second);
+            is_height[router1] = true;
+            is_width[router2] = true;
+            it ++;    
         }
     }
-    if(type == 2)
+    
+    //进行一个矩阵变换
+    int minimatrix[router_max][router_max][2];
+    int height = 0;
+    int width = 0;
+    for(int i = 0; i < r_num; i++)
     {
-        printf("stack: \n");
-        for(int i = 0; i < stack_place; i++)
+        if(!is_height[i])
         {
-            printf("%d ", router_stack[i]);
+            continue;
         }
-        printf("\n");
+        width = 0;
+        for(int j = 0; j < r_num; j++)
+        {
+            if(!is_width[j])
+                continue;
+            else
+            {
+                minimatrix[height][width][0] = i;
+                minimatrix[height][width][1] = j;
+                width++;
+            }   
+        }
+        height++;
+    }
+    // printf("h: %d, w: %d\n", height, width);
+    // for(int i = 0; i < height; i++)
+    // {
+    //     for(int j = 0; j < width; j++)
+    //     {
+    //         printf("(%d, %d)\n", minimatrix[i][j][0], minimatrix[i][j][1]);
+    //     }
+    // }
+    
+    for(int i = 0; i < r_num; i++)
+    {
+        for(int j = 0; j < r_num; j++)
+        {
+            rmatrix2[i][j] = rmatrix[i][j];
+        }
+    }
+    for(int k = 1; k <= r_num; k++)
+    {   
+        if(k % 2 == 1)
+        {
+            for(int i = 0; i < height; i++)
+            {
+                for(int j = 0; j < width; j++)
+                {
+                    rmatrix1[minimatrix[i][j][0]][minimatrix[i][j][1]] = rmatrix2[minimatrix[i][j][0]][minimatrix[i][j][1]] 
+                                                                            + (rmatrix2[minimatrix[i][j][0]][k] * rmatrix2[k][minimatrix[i][j][1]]);
+                }
+            }
+        }
+        else if(k % 2 == 0)
+        {
+            for(int i = 0; i < height; i++)
+            {
+                for(int j = 0; j < width; j++)
+                {
+                    rmatrix2[minimatrix[i][j][0]][minimatrix[i][j][1]] = rmatrix1[minimatrix[i][j][0]][minimatrix[i][j][1]] 
+                                                                            + (rmatrix1[minimatrix[i][j][0]][k] * rmatrix1[k][minimatrix[i][j][1]]);
+                }
+            }
+        }
+    }
+
+    if(r_num % 2 == 1)
+    {
+        for(int i = 0; i < r_num; i++)
+        {
+            for(int j = 0; j < r_num; j++)
+            {
+                printf("matrix: %d : %d \n", i, j);
+                rmatrix1[i][j].show_rules();
+            }
+        }
+    }
+    else if(r_num % 2 == 0)
+    {
+        for(int i = 0; i < r_num; i++)
+        {
+            for(int j = 0; j < r_num; j++)
+            {
+                printf("matrix: %d : %d \n", i, j);
+                rmatrix2[i][j].show_rules();
+            }
+        }
     }
 }

@@ -1,10 +1,7 @@
-/brutal_force/exe/
-/brutal_force/CMakeFiles/
-/brutal_force/cmake-build-debug/
-/warshall_no_path/exe/
-/warshall_no_path/CMakeFiles/
-/warshall_no_path/cmake-build-debug/
-/warshall_no_path/.idea/
+/codes/exe/
+/codes/CMakeFiles/
+/codes/cmake-build-debug/
+/codes/.idea/
 
 *.o
 *.cbp
