@@ -35,7 +35,7 @@ public:
     void dfs_search(uint32_t router, uint32_t destiny, std::set<uint64_t> rules);
     void display_result(std::set<uint64_t> rules);
 
-    void warshall_no_path();
+    void warshall_with_path();
 private:
     //map <port_id, another_port_id>
     std::map<uint64_t, uint64_t> topology;

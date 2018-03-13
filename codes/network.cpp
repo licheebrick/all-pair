@@ -80,7 +80,7 @@ void Network::print_topology()
     printf("topology: \n");
     std::map<uint64_t, uint64_t>::iterator it;
     it = topology.begin();
-    while(it !=topology.end())
+    while(it != topology.end())
     {
         printf("from %llu to %llu\n", it->first, it->second);
         it ++;         
@@ -182,10 +182,9 @@ void Network::display_result(std::set<uint64_t> rules)
     printf("\n");
 }
 
-void Network::warshall_no_path()
+void Network::warshall_with_path()
 {
     //先算一个基本的r0，然后推导到rk
-    //后面可以有一个强行减小矩阵的优化
     bool is_height[router_max] = {false};
     bool is_width[router_max] = {false};
 
@@ -199,7 +198,10 @@ void Network::warshall_no_path()
             uint64_t next_port_num = topology[port_num];
             uint32_t router1 = port_to_router[port_num];
             uint32_t router2 = port_to_router[next_port_num];
-            rmatrix[router1][router2].set_rules(it->second);
+            uint32_t router_array[] = {router1, router2};
+            std::list<uint32_t> tmp;
+            tmp.assign(router_array, router_array + 2);
+            rmatrix[router1][router2].set_path_to_rules(tmp, it->second);
             is_height[router1] = true;
             is_width[router2] = true;
             it ++;    
@@ -213,9 +215,8 @@ void Network::warshall_no_path()
     for(int i = 0; i < r_num; i++)
     {
         if(!is_height[i])
-        {
             continue;
-        }
+
         width = 0;
         for(int j = 0; j < r_num; j++)
         {
@@ -230,22 +231,10 @@ void Network::warshall_no_path()
         }
         height++;
     }
-    // printf("h: %d, w: %d\n", height, width);
-    // for(int i = 0; i < height; i++)
-    // {
-    //     for(int j = 0; j < width; j++)
-    //     {
-    //         printf("(%d, %d)\n", minimatrix[i][j][0], minimatrix[i][j][1]);
-    //     }
-    // }
     
     for(int i = 0; i < r_num; i++)
-    {
         for(int j = 0; j < r_num; j++)
-        {
             rmatrix2[i][j] = rmatrix[i][j];
-        }
-    }
     for(int k = 1; k <= r_num; k++)
     {   
         if(k % 2 == 1)
@@ -254,8 +243,8 @@ void Network::warshall_no_path()
             {
                 for(int j = 0; j < width; j++)
                 {
-                    rmatrix1[minimatrix[i][j][0]][minimatrix[i][j][1]] = rmatrix2[minimatrix[i][j][0]][minimatrix[i][j][1]] 
-                                                                            + (rmatrix2[minimatrix[i][j][0]][k] * rmatrix2[k][minimatrix[i][j][1]]);
+                    rmatrix1[minimatrix[i][j][0]][minimatrix[i][j][1]] = rmatrix2[minimatrix[i][j][0]][k] * rmatrix2[k][minimatrix[i][j][1]];
+                    rmatrix1[minimatrix[i][j][0]][minimatrix[i][j][1]] = rmatrix1[minimatrix[i][j][0]][minimatrix[i][j][1]] + rmatrix2[minimatrix[i][j][0]][minimatrix[i][j][1]]; 
                 }
             }
         }
@@ -265,8 +254,8 @@ void Network::warshall_no_path()
             {
                 for(int j = 0; j < width; j++)
                 {
-                    rmatrix2[minimatrix[i][j][0]][minimatrix[i][j][1]] = rmatrix1[minimatrix[i][j][0]][minimatrix[i][j][1]] 
-                                                                            + (rmatrix1[minimatrix[i][j][0]][k] * rmatrix1[k][minimatrix[i][j][1]]);
+                    rmatrix2[minimatrix[i][j][0]][minimatrix[i][j][1]] = rmatrix1[minimatrix[i][j][0]][k] * rmatrix1[k][minimatrix[i][j][1]];
+                    rmatrix2[minimatrix[i][j][0]][minimatrix[i][j][1]] = rmatrix2[minimatrix[i][j][0]][minimatrix[i][j][1]] + rmatrix1[minimatrix[i][j][0]][minimatrix[i][j][1]];
                 }
             }
         }
