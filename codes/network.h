@@ -32,8 +32,8 @@ public:
 
     //all pair reachability:
     void brutal_force();
-    void dfs_search(uint32_t router, uint32_t destiny, std::set<uint64_t> rules);
-    void display_result(std::set<uint64_t> rules);
+    void dfs_search(uint32_t router, uint32_t destiny, std::set<uint64_t>* rules);
+    void display_result(std::set<uint64_t>* rules);
 
     void warshall_with_path();
 private:
@@ -44,13 +44,13 @@ private:
     std::map< uint64_t, uint32_t> port_to_router;
 
     //for dfs search
-    bool have_been[router_max] = {false};
+    bool have_been[router_max];
 
-    uint32_t router_stack[router_max] = {999999};
-    uint32_t stack_place = 0;
+    uint32_t router_stack[router_max];
+    uint32_t stack_place;
     Router routers[router_max];
 
-    int r_num = 1000;//the number of routers
+    int r_num;//the number of routers
 
     static Reachability rmatrix[router_max][router_max];
     static Reachability rmatrix1[router_max][router_max];

@@ -14,26 +14,16 @@ Reachability::~Reachability()
 
 }
 
-void Reachability::set_rules(std::set<uint64_t> set_rules)
+void Reachability::set_path_to_packets(std::list<uint32_t> set_list, std::set<uint64_t> set_rules)
 {
-    rules = set_rules;
+    path_to_packets[set_list] = set_rules;
 }
 
-void Reachability::set_path_to_rules(std::list<uint32_t> set_list, std::set<uint64_t> set_rules)
+void Reachability::show_path_to_packets()
 {
-    path_to_rules[set_list] = set_rules;
-}
-
-std::set<uint64_t> Reachability::get_rules()
-{
-    return rules;
-}
-
-void Reachability::show_rules()
-{
-    std::map<std::list<uint32_t>, std::set<uint64_t> >::iterator iter = path_to_rules.begin();  
+    std::map<std::list<uint32_t>, std::set<uint64_t> >::iterator iter = path_to_packets.begin();  
        
-    while(iter != path_to_rules.end())
+    while(iter != path_to_packets.end())
     {
         printf("This path includes router: ");
         std::list<uint32_t> tmp = iter->first;
@@ -59,9 +49,9 @@ Reachability Reachability::operator*(Reachability &reach)
     std::list<uint32_t>::iterator it_list;
     std::map<std::list<uint32_t>, std::set<uint64_t> >::iterator it1;
     std::map<std::list<uint32_t>, std::set<uint64_t> >::iterator it2;
-    for(it1 = path_to_rules.begin(); it1 != path_to_rules.end(); ++ it1)
+    for(it1 = path_to_packets.begin(); it1 != path_to_packets.end(); ++ it1)
     {
-        for(it2 = reach.path_to_rules.begin(); it2 != reach.path_to_rules.end(); ++ it2)
+        for(it2 = reach.path_to_packets.begin(); it2 != reach.path_to_packets.end(); ++ it2)
         {
             std::set<uint64_t> tmp1 = it1->second;
             std::set<uint64_t> tmp2 = it2->second;
@@ -78,7 +68,7 @@ Reachability Reachability::operator*(Reachability &reach)
                 it_list = tmp_list2.begin();
                 it_list = tmp_list2.erase(it_list);
                 tmp_list2.splice(it_list, tmp_list1);
-                insection.set_path_to_rules(tmp_list2, insection_result);
+                insection.set_path_to_packets(tmp_list2, insection_result);
             }
         }
     }   
@@ -91,10 +81,10 @@ Reachability Reachability::operator+(Reachability &reach)
     std::map<std::list<uint32_t>, std::set<uint64_t> >::iterator it1;
     std::map<std::list<uint32_t>, std::set<uint64_t> >::iterator it2;
 
-    for(it1 = path_to_rules.begin(); it1 != path_to_rules.end(); ++it1)
-        union_result.path_to_rules[it1->first] = it1->second;
-    for(it2 = reach.path_to_rules.begin(); it2 != reach.path_to_rules.end(); ++it2)
-        union_result.path_to_rules[it2->first] = it2->second;
+    for(it1 = path_to_packets.begin(); it1 != path_to_packets.end(); ++it1)
+        union_result.path_to_packets[it1->first] = it1->second;
+    for(it2 = reach.path_to_packets.begin(); it2 != reach.path_to_packets.end(); ++it2)
+        union_result.path_to_packets[it2->first] = it2->second;
 
     return union_result;
 }
