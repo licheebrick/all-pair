@@ -202,12 +202,13 @@ void Network::warshall_with_path()
             uint32_t router_array[] = {router1, router2};
             std::list<uint32_t> tmp;
             tmp.assign(router_array, router_array + 2);
-            rmatrix[router1][router2].set_path_to_packets(tmp, (*it->second));
+            rmatrix[router1][router2].set_path_to_packets(&tmp, it->second);
             is_height[router1] = true;
             is_width[router2] = true;
             it ++;    
         }
     }
+    printf("miao\n");
     
     //进行一个矩阵变换
     int minimatrix[router_max][router_max][2];

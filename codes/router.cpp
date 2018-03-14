@@ -30,7 +30,7 @@ void Router::routers_init(uint32_t id)//用来暴力初始化router的
     router_id = id;
 }
 
-void Router::print_port_to_patch()
+void Router::print_port_to_match()
 {
     printf("This router include: \n");
     std::map< uint64_t, std::set<uint64_t>* >::iterator it;
