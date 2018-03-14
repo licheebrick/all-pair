@@ -4,6 +4,7 @@
 #include <iostream>
 #include <fstream>
 #include <string.h>
+#include<time.h>    
 
 using namespace std;
 
@@ -16,6 +17,9 @@ int main(int argc, char* argv[])
     printf("Which one?\n");
     cin >> flag;
     
+    clock_t startTime,endTime;  
+    startTime = clock();
+
     Network network_example(router_num);
 
     //read topology
@@ -41,9 +45,12 @@ int main(int argc, char* argv[])
     if(flag == 1)
         network_example.brutal_force();
     else if(flag == 2)
-        network_example.warshall_no_path();
+        network_example.warshall_with_path();
     else
-        printf("??????????????\n");
+        printf("1: brutal_force; 2: warshall_record_path\n");
     
+    endTime = clock();  
+    printf("Totle Time : %f s \n", (double)(endTime - startTime) / CLOCKS_PER_SEC);
+    //cout << "Totle Time : " <<(double)(endTime - startTime) / CLOCKS_PER_SEC << "s" << endl; 
     return 0;
 }

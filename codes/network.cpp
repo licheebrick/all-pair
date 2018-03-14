@@ -10,7 +10,7 @@ Reachability Network::rmatrix2[router_max][router_max];
 
 Network::Network()
 {
-    r_num = 1000;
+    r_num = router_max;
 }
 
 Network::Network(int num)
@@ -36,22 +36,16 @@ void Network::init()
     uint64_t port5[] = {1,4};
     uint64_t port8[] = {1,3};
 
-    std::set<uint64_t> portset1 (port1, port1 + 2);
-    routers[0].port_to_match[1] = portset1;
-    std::set<uint64_t> portset2 (port2, port2 + 2);
-    routers[0].port_to_match[2] = portset2;
-    std::set<uint64_t> portset4 (port4, port4 + 2);
-    routers[1].port_to_match[4] = portset4;
-    std::set<uint64_t> portset5 (port5, port5 + 2);
-    routers[1].port_to_match[5] = portset5;
-    std::set<uint64_t> portset8 (port8, port8 + 2);
-    routers[2].port_to_match[8] = portset8;
-
-    Reachability reach1;
-    Reachability reach2;
-    Reachability reach3;
-    reach3 = reach1 * reach2;
-    reach3 = reach1 + reach2;
+    routers[0].port_to_match[1] = new std::set<uint64_t>; 
+    routers[0].port_to_match[1]->insert(port1, port1 + 2);
+    routers[0].port_to_match[2] = new std::set<uint64_t>; 
+    routers[0].port_to_match[2]->insert(port2, port2 + 2);
+    routers[1].port_to_match[4] = new std::set<uint64_t>; 
+    routers[1].port_to_match[4]->insert(port4, port4 + 2);
+    routers[1].port_to_match[5] = new std::set<uint64_t>; 
+    routers[1].port_to_match[5]->insert(port5, port5 + 2);
+    routers[2].port_to_match[8] = new std::set<uint64_t>; 
+    routers[2].port_to_match[8]->insert(port8, port8 + 2);
 
     printf("finish writing rules!!\n");
     
@@ -80,7 +74,7 @@ void Network::print_topology()
     printf("topology: \n");
     std::map<uint64_t, uint64_t>::iterator it;
     it = topology.begin();
-    while(it !=topology.end())
+    while(it != topology.end())
     {
         printf("from %llu to %llu\n", it->first, it->second);
         it ++;         
@@ -106,10 +100,13 @@ void Network::print_port_to_router()
 
 void Network::brutal_force()
 {
-    //递归
+    //init
     uint64_t full_array[rule_type];
     for (int i = 0; i < rule_type; i++)
         full_array[i] = i + 1;
+    memset(have_been, false, router_max);
+    memset(router_stack, 99999, router_max);
+    stack_place = 0;
 
     std::set<uint64_t> full_rules (full_array, full_array + rule_type);
     for (int i = 0; i < r_num; i++)
@@ -121,17 +118,18 @@ void Network::brutal_force()
             if(i != j)
                 have_been[i] = true;
             router_stack[stack_place++] = i;
-            dfs_search(i, j, full_rules);
+            dfs_search(i, j, &full_rules);
             router_stack[stack_place--] = -1;
             printf("finish this one~\n");
         }
     }
 }
 
-void Network::dfs_search(uint32_t router, uint32_t destiny, std::set<uint64_t> rules)
+void Network::dfs_search(uint32_t router, uint32_t destiny, std::set<uint64_t>* rules)
 {
     //我们默认它进入这个函数是不可能相同的
-    std::map< uint64_t, std::set<uint64_t> >::iterator it;
+    
+    std::map< uint64_t, std::set<uint64_t>* >::iterator it;
     it = routers[router].port_to_match.begin();
     while(it != routers[router].port_to_match.end())
     {
@@ -141,12 +139,13 @@ void Network::dfs_search(uint32_t router, uint32_t destiny, std::set<uint64_t> r
         if(have_been[port_to_router[next_port_num]])
             continue;
         //如果到过了就GG
-        std::set<uint64_t> new_match;
-        std::set_intersection(rules.begin(), rules.end(), 
-                                routers[router].port_to_match[port_num].begin(), 
-                                routers[router].port_to_match[port_num].end(), 
-                                std::inserter(new_match, new_match.begin()));
-        if(new_match.empty())
+        std::set<uint64_t>* new_match;
+        new_match = new std::set<uint64_t>;
+        std::set_intersection((*rules).begin(), (*rules).end(), 
+                                (*routers[router].port_to_match[port_num]).begin(), 
+                                (*routers[router].port_to_match[port_num]).end(), 
+                                std::inserter(*new_match, (*new_match).begin()));
+        if((*new_match).empty())
             continue;
         //如果不为空则可达
         if(port_to_router[next_port_num] == destiny)
@@ -164,11 +163,13 @@ void Network::dfs_search(uint32_t router, uint32_t destiny, std::set<uint64_t> r
             have_been[port_to_router[next_port_num]] = false;
         }
         //如果刚好到了终点则输出
+        delete new_match;
+        new_match = NULL;
         it ++;         
     }
 }
 
-void Network::display_result(std::set<uint64_t> rules)
+void Network::display_result(std::set<uint64_t>* rules)
 {
     //display the path and match
     printf("This path includes router: ");
@@ -177,21 +178,20 @@ void Network::display_result(std::set<uint64_t> rules)
 
     printf("with rules: ");
     std::set<uint64_t>::iterator it;
-    for(it = rules.begin(); it != rules.end(); it++)
+    for(it = (*rules).begin(); it != (*rules).end(); it++)
         printf("%llu ", *it);
     printf("\n");
 }
 
-void Network::warshall_no_path()
+void Network::warshall_with_path()
 {
     //先算一个基本的r0，然后推导到rk
-    //后面可以有一个强行减小矩阵的优化
     bool is_height[router_max] = {false};
     bool is_width[router_max] = {false};
 
     for(int i = 0; i < r_num; i++)
     {
-        std::map< uint64_t, std::set<uint64_t> >::iterator it;
+        std::map< uint64_t, std::set<uint64_t>* >::iterator it;
         it = routers[i].port_to_match.begin();
         while(it != routers[i].port_to_match.end())
         {
@@ -199,12 +199,16 @@ void Network::warshall_no_path()
             uint64_t next_port_num = topology[port_num];
             uint32_t router1 = port_to_router[port_num];
             uint32_t router2 = port_to_router[next_port_num];
-            rmatrix[router1][router2].set_rules(it->second);
+            uint32_t router_array[] = {router1, router2};
+            std::list<uint32_t> tmp;
+            tmp.assign(router_array, router_array + 2);
+            rmatrix[router1][router2].set_path_to_packets(&tmp, it->second);
             is_height[router1] = true;
             is_width[router2] = true;
             it ++;    
         }
     }
+    printf("miao\n");
     
     //进行一个矩阵变换
     int minimatrix[router_max][router_max][2];
@@ -213,9 +217,8 @@ void Network::warshall_no_path()
     for(int i = 0; i < r_num; i++)
     {
         if(!is_height[i])
-        {
             continue;
-        }
+
         width = 0;
         for(int j = 0; j < r_num; j++)
         {
@@ -230,22 +233,10 @@ void Network::warshall_no_path()
         }
         height++;
     }
-    // printf("h: %d, w: %d\n", height, width);
-    // for(int i = 0; i < height; i++)
-    // {
-    //     for(int j = 0; j < width; j++)
-    //     {
-    //         printf("(%d, %d)\n", minimatrix[i][j][0], minimatrix[i][j][1]);
-    //     }
-    // }
     
     for(int i = 0; i < r_num; i++)
-    {
         for(int j = 0; j < r_num; j++)
-        {
             rmatrix2[i][j] = rmatrix[i][j];
-        }
-    }
     for(int k = 1; k <= r_num; k++)
     {   
         if(k % 2 == 1)
@@ -254,8 +245,8 @@ void Network::warshall_no_path()
             {
                 for(int j = 0; j < width; j++)
                 {
-                    rmatrix1[minimatrix[i][j][0]][minimatrix[i][j][1]] = rmatrix2[minimatrix[i][j][0]][minimatrix[i][j][1]] 
-                                                                            + (rmatrix2[minimatrix[i][j][0]][k] * rmatrix2[k][minimatrix[i][j][1]]);
+                    rmatrix1[minimatrix[i][j][0]][minimatrix[i][j][1]] = rmatrix2[minimatrix[i][j][0]][k] * rmatrix2[k][minimatrix[i][j][1]];
+                    rmatrix1[minimatrix[i][j][0]][minimatrix[i][j][1]] = rmatrix1[minimatrix[i][j][0]][minimatrix[i][j][1]] + rmatrix2[minimatrix[i][j][0]][minimatrix[i][j][1]]; 
                 }
             }
         }
@@ -265,8 +256,8 @@ void Network::warshall_no_path()
             {
                 for(int j = 0; j < width; j++)
                 {
-                    rmatrix2[minimatrix[i][j][0]][minimatrix[i][j][1]] = rmatrix1[minimatrix[i][j][0]][minimatrix[i][j][1]] 
-                                                                            + (rmatrix1[minimatrix[i][j][0]][k] * rmatrix1[k][minimatrix[i][j][1]]);
+                    rmatrix2[minimatrix[i][j][0]][minimatrix[i][j][1]] = rmatrix1[minimatrix[i][j][0]][k] * rmatrix1[k][minimatrix[i][j][1]];
+                    rmatrix2[minimatrix[i][j][0]][minimatrix[i][j][1]] = rmatrix2[minimatrix[i][j][0]][minimatrix[i][j][1]] + rmatrix1[minimatrix[i][j][0]][minimatrix[i][j][1]];
                 }
             }
         }
@@ -279,7 +270,7 @@ void Network::warshall_no_path()
             for(int j = 0; j < r_num; j++)
             {
                 printf("matrix: %d : %d \n", i, j);
-                rmatrix1[i][j].show_rules();
+                rmatrix1[i][j].show_path_to_packets();
             }
         }
     }
@@ -290,7 +281,7 @@ void Network::warshall_no_path()
             for(int j = 0; j < r_num; j++)
             {
                 printf("matrix: %d : %d \n", i, j);
-                rmatrix2[i][j].show_rules();
+                rmatrix2[i][j].show_path_to_packets();
             }
         }
     }

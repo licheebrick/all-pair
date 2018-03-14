@@ -20,9 +20,10 @@ public:
     ~Router();
     void routers_init(uint32_t id);
     uint32_t getid(){return router_id;}
+    void print_port_to_match();
     
     //map<port_id, match>
-    std::map< uint64_t, std::set<uint64_t> > port_to_match;
+    std::map< uint64_t, std::set<uint64_t>* > port_to_match;
 private:
     uint32_t router_id;
 };
