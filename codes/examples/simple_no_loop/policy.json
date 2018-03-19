@@ -1,0 +1,13 @@
+{
+    "actions": [
+        {
+          "jsonrpc": "2.0",
+          "id": 1,
+          "method": "query_reach",
+          "params": {
+            "from_port": 21,
+            "to_port": 34
+          }
+        }
+    ]
+}

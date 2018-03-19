@@ -6,6 +6,7 @@
 *.o
 *.cbp
 *.cmake
+Makefile
 
 settings.json
 all_pair

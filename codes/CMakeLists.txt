@@ -3,7 +3,7 @@ project(warshall_no_path)
 
 set(CMAKE_CXX_STANDARD 11)
 
-set(SOURCE_FILES main.cpp network.cpp network.h router.cpp router.h reachability.h reachability.cpp)
+set(SOURCE_FILES main.cpp network.cpp network.h router.cpp router.h reachability.h reachability.cpp utils.cpp utils.h)
 
 set(CMAKE_BUILD_TYPE Debug)
 
