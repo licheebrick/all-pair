@@ -138,7 +138,11 @@ void Network::dfs_search(uint32_t router, uint32_t destiny, std::set<uint64_t>* 
         uint64_t next_port_num = topology[port_num];
         //有这条边
         if(have_been[port_to_router[next_port_num]])
+        {
+            it++;
             continue;
+        }
+            
         //如果到过了就GG
         std::set<uint64_t>* new_match;
         new_match = new std::set<uint64_t>;
@@ -147,7 +151,10 @@ void Network::dfs_search(uint32_t router, uint32_t destiny, std::set<uint64_t>* 
                                 (*routers[router].port_to_match[port_num]).end(), 
                                 std::inserter(*new_match, (*new_match).begin()));
         if((*new_match).empty())
+        {
+            it++;
             continue;
+        }     
         //如果不为空则可达
         if(port_to_router[next_port_num] == destiny)
         {
@@ -414,7 +421,6 @@ void Network::rule_based()
                 list_str = list_str + to_string(router_place);
                 router_list.push_back(router_place);
                 rulebased.set_new_rule(list_str, &router_list, i);
-                rulebased.print_rule_map();
             }
         }
     }

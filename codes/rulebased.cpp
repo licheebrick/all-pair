@@ -19,17 +19,7 @@ void Rulebased::set_new_rule(string list_str, std::list<uint32_t>* tmp_list, uin
     std::map<uint32_t, std::map<std::list<uint32_t>*, std::set<uint64_t>* >* >::iterator it;
     it = rule_map.find(list_string(list_str));
     if(it != rule_map.end())//already have it
-    {
-        // std::map<std::list<uint32_t>, std::set<uint64_t> > tmp = *(rule_map[list_string(list_str)]);
-        // std::map<std::list<uint32_t>, std::set<uint64_t> >::iterator iter;
-        // for(iter = tmp.begin(); iter != tmp.end(); iter++)
-        // {
-        //     (iter->second).insert(iter, rule);
-        // }
-        // std::map<std::list<uint32_t>, std::set<uint64_t> >::iterator iter;
-        // iter = (*(rule_map[list_string(list_str)])).begin();
         (*((*(rule_map[list_string(list_str)])).begin())->second).insert(rule);
-    }
     else
     {
         printf("an???");
