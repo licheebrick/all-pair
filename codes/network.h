@@ -7,15 +7,17 @@
 
 #include "router.h"
 #include "reachability.h"
+#include "rulebased.h"
 #include <stdint.h>
 #include <iostream>
 #include <map>
 #include <vector>
 #include <set>
+#include <string>
 using namespace std;
 
-const int router_max = 1000;//total
-const int rule_type = 10;   //假设有10种流量
+const uint32_t router_max = 1000;//total
+const uint64_t rule_type = 4;   //假设有10种流量
 
 class Network
 {
@@ -38,6 +40,8 @@ public:
     void warshall_with_path();
 
     void segment_based();
+
+    void rule_based();
 private:
     //map <port_id, another_port_id>
     std::map<uint64_t, uint64_t> topology;
