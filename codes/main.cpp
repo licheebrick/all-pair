@@ -46,6 +46,8 @@ int main(int argc, char* argv[])
         network_example.brutal_force();
     else if(flag == 2)
         network_example.warshall_with_path();
+    else if(flag == 3)
+        network_example.segment_based();
     else
         printf("1: brutal_force; 2: warshall_record_path\n");
     

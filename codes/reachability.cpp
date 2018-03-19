@@ -65,7 +65,7 @@ Reachability Reachability::operator*(Reachability &reach)
             std::set_intersection(tmp1.begin(), tmp1.end(), 
                             tmp2.begin(), tmp2.end(), 
                             std::inserter(insection_result, insection_result.begin()));
-
+            printf("insection!\n");
             if(insection_result.empty())
                 continue;
             else

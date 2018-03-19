@@ -36,6 +36,8 @@ public:
     void display_result(std::set<uint64_t>* rules);
 
     void warshall_with_path();
+
+    void segment_based();
 private:
     //map <port_id, another_port_id>
     std::map<uint64_t, uint64_t> topology;
@@ -55,6 +57,7 @@ private:
     static Reachability rmatrix[router_max][router_max];
     static Reachability rmatrix1[router_max][router_max];
     static Reachability rmatrix2[router_max][router_max];
+    static Reachability rmatrix3[router_max][router_max];
 }; 
 
 #endif //WARSHALL_NO_PATH_NETWORK_H
