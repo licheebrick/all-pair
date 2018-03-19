@@ -53,6 +53,6 @@ int main(int argc, char* argv[])
     
     endTime = clock();  
     printf("Totle Time : %f s \n", (double)(endTime - startTime) / CLOCKS_PER_SEC);
-    //cout << "Totle Time : " <<(double)(endTime - startTime) / CLOCKS_PER_SEC << "s" << endl; 
+    
     return 0;
 }

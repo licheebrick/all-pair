@@ -209,7 +209,6 @@ void Network::warshall_with_path()
             it ++;    
         }
     }
-    printf("miao\n");
     
     //进行一个矩阵变换
     int minimatrix[router_max][router_max][2];
@@ -237,8 +236,8 @@ void Network::warshall_with_path()
     
     for(int i = 0; i < r_num; i++)
         for(int j = 0; j < r_num; j++)
-            rmatrix2[i][j] = rmatrix[i][j];
-    for(int k = 1; k <= r_num; k++)
+            rmatrix1[i][j] = rmatrix[i][j];
+    for(int k = 0; k < r_num; k++)
     {   
         if(k % 2 == 1)
         {
@@ -264,7 +263,7 @@ void Network::warshall_with_path()
         }
     }
 
-    if(r_num % 2 == 1)
+    if(r_num % 2 == 0)
     {
         for(int i = 0; i < r_num; i++)
         {
@@ -275,7 +274,7 @@ void Network::warshall_with_path()
             }
         }
     }
-    else if(r_num % 2 == 0)
+    else if(r_num % 2 == 1)
     {
         for(int i = 0; i < r_num; i++)
         {
