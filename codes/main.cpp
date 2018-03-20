@@ -46,11 +46,15 @@ int main(int argc, char* argv[])
         network_example.brutal_force();
     else if(flag == 2)
         network_example.warshall_with_path();
+    else if(flag == 3)
+        network_example.segment_based();
+    else if(flag == 4)
+        network_example.rule_based();
     else
         printf("1: brutal_force; 2: warshall_record_path\n");
     
     endTime = clock();  
     printf("Totle Time : %f s \n", (double)(endTime - startTime) / CLOCKS_PER_SEC);
-    //cout << "Totle Time : " <<(double)(endTime - startTime) / CLOCKS_PER_SEC << "s" << endl; 
+
     return 0;
 }

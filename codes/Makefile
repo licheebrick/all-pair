@@ -231,6 +231,33 @@ router.cpp.s:
 	$(MAKE) -f CMakeFiles/all_pair.dir/build.make CMakeFiles/all_pair.dir/router.cpp.s
 .PHONY : router.cpp.s
 
+rulebased.o: rulebased.cpp.o
+
+.PHONY : rulebased.o
+
+# target to build an object file
+rulebased.cpp.o:
+	$(MAKE) -f CMakeFiles/all_pair.dir/build.make CMakeFiles/all_pair.dir/rulebased.cpp.o
+.PHONY : rulebased.cpp.o
+
+rulebased.i: rulebased.cpp.i
+
+.PHONY : rulebased.i
+
+# target to preprocess a source file
+rulebased.cpp.i:
+	$(MAKE) -f CMakeFiles/all_pair.dir/build.make CMakeFiles/all_pair.dir/rulebased.cpp.i
+.PHONY : rulebased.cpp.i
+
+rulebased.s: rulebased.cpp.s
+
+.PHONY : rulebased.s
+
+# target to generate assembly for a file
+rulebased.cpp.s:
+	$(MAKE) -f CMakeFiles/all_pair.dir/build.make CMakeFiles/all_pair.dir/rulebased.cpp.s
+.PHONY : rulebased.cpp.s
+
 # Help Target
 help:
 	@echo "The following are some of the valid targets for this Makefile:"
@@ -252,6 +279,9 @@ help:
 	@echo "... router.o"
 	@echo "... router.i"
 	@echo "... router.s"
+	@echo "... rulebased.o"
+	@echo "... rulebased.i"
+	@echo "... rulebased.s"
 .PHONY : help
 
 

@@ -7,6 +7,7 @@
 Reachability Network::rmatrix[router_max][router_max];
 Reachability Network::rmatrix1[router_max][router_max];
 Reachability Network::rmatrix2[router_max][router_max];
+Reachability Network::rmatrix3[router_max][router_max];
 
 Network::Network()
 {
@@ -30,11 +31,11 @@ Network::~Network()
 void Network::init()
 {
     //这块得等学姐的接口了
-    uint64_t port1[] = {1,2};
-    uint64_t port2[] = {2,3};
-    uint64_t port4[] = {1,4};
+    uint64_t port1[] = {3,4};
+    uint64_t port2[] = {1,2};
+    uint64_t port4[] = {2,3};
     uint64_t port5[] = {1,4};
-    uint64_t port8[] = {1,3};
+    uint64_t port8[] = {1,2,3};
 
     routers[0].port_to_match[1] = new std::set<uint64_t>; 
     routers[0].port_to_match[1]->insert(port1, port1 + 2);
@@ -45,7 +46,7 @@ void Network::init()
     routers[1].port_to_match[5] = new std::set<uint64_t>; 
     routers[1].port_to_match[5]->insert(port5, port5 + 2);
     routers[2].port_to_match[8] = new std::set<uint64_t>; 
-    routers[2].port_to_match[8]->insert(port8, port8 + 2);
+    routers[2].port_to_match[8]->insert(port8, port8 + 3);
 
     printf("finish writing rules!!\n");
     
@@ -137,7 +138,11 @@ void Network::dfs_search(uint32_t router, uint32_t destiny, std::set<uint64_t>* 
         uint64_t next_port_num = topology[port_num];
         //有这条边
         if(have_been[port_to_router[next_port_num]])
+        {
+            it++;
             continue;
+        }
+            
         //如果到过了就GG
         std::set<uint64_t>* new_match;
         new_match = new std::set<uint64_t>;
@@ -146,7 +151,10 @@ void Network::dfs_search(uint32_t router, uint32_t destiny, std::set<uint64_t>* 
                                 (*routers[router].port_to_match[port_num]).end(), 
                                 std::inserter(*new_match, (*new_match).begin()));
         if((*new_match).empty())
+        {
+            it++;
             continue;
+        }     
         //如果不为空则可达
         if(port_to_router[next_port_num] == destiny)
         {
@@ -208,7 +216,6 @@ void Network::warshall_with_path()
             it ++;    
         }
     }
-    printf("miao\n");
     
     //进行一个矩阵变换
     int minimatrix[router_max][router_max][2];
@@ -236,8 +243,8 @@ void Network::warshall_with_path()
     
     for(int i = 0; i < r_num; i++)
         for(int j = 0; j < r_num; j++)
-            rmatrix2[i][j] = rmatrix[i][j];
-    for(int k = 1; k <= r_num; k++)
+            rmatrix1[i][j] = rmatrix[i][j];
+    for(int k = 0; k < r_num; k++)
     {   
         if(k % 2 == 1)
         {
@@ -263,7 +270,7 @@ void Network::warshall_with_path()
         }
     }
 
-    if(r_num % 2 == 1)
+    if(r_num % 2 == 0)
     {
         for(int i = 0; i < r_num; i++)
         {
@@ -274,7 +281,7 @@ void Network::warshall_with_path()
             }
         }
     }
-    else if(r_num % 2 == 0)
+    else if(r_num % 2 == 1)
     {
         for(int i = 0; i < r_num; i++)
         {
@@ -285,4 +292,138 @@ void Network::warshall_with_path()
             }
         }
     }
+}
+
+void Network::segment_based()
+{
+    //先算一个基本的r0，然后推导到rk
+    bool is_height[router_max] = {false};
+    bool is_width[router_max] = {false};
+    
+    for(int i = 0; i < r_num; i++)
+    {
+        std::map< uint64_t, std::set<uint64_t>* >::iterator it;
+        it = routers[i].port_to_match.begin();
+        while(it != routers[i].port_to_match.end())
+        {
+            uint64_t port_num = it->first;
+            uint64_t next_port_num = topology[port_num];
+            uint32_t router1 = port_to_router[port_num];
+            uint32_t router2 = port_to_router[next_port_num];
+            uint32_t router_array[] = {router1, router2};
+            std::list<uint32_t> tmp;
+            tmp.assign(router_array, router_array + 2);
+            rmatrix[router1][router2].set_path_to_packets(&tmp, it->second);
+            is_height[router1] = true;
+            is_width[router2] = true;
+            it ++;    
+        }
+    }
+
+    for(int i = 0; i < r_num; i++)
+        for(int j = 0; j < r_num; j++)
+        {
+            rmatrix2[i][j] = rmatrix[i][j];
+            rmatrix3[i][j] = rmatrix[i][j];
+        }
+            
+    Reachability tmp;
+    //rmatrix3用来存总的，rmatrix1和rmatrix2是分的
+    for(int k = 3; k <= r_num; k++)
+    {   
+        if(k % 2 == 1)
+        {
+            for(int i = 0; i < r_num; i++)
+            {
+                if(!is_height[i])
+                    continue;
+                for(int j = 0; j < r_num; j++)
+                {
+                    if(!is_width[j])
+                        continue;
+                    rmatrix1[i][j] = rmatrix2[i][0] * rmatrix[0][j];
+                    for(int place = 0; place < r_num; place++)
+                    {
+                        tmp = rmatrix2[i][place] * rmatrix[place][j];
+                        rmatrix1[i][j] = rmatrix1[i][j] + tmp;
+                    }
+                    rmatrix3[i][j] = rmatrix3[i][j] + rmatrix1[i][j];
+                }
+            }
+        }
+        else if(k % 2 == 0)
+        {
+            for(int i = 0; i < r_num; i++)
+            {
+                if(!is_height[i])
+                    continue;
+                for(int j = 0; j < r_num; j++)
+                {
+                    if(!is_width[j])
+                        continue;
+                    rmatrix2[i][j] = rmatrix1[i][0] * rmatrix[0][j];
+                    for(int place = 0; place < r_num; place++)
+                    {
+                        tmp = rmatrix1[i][place] * rmatrix[place][j];
+                        rmatrix2[i][j] = rmatrix2[i][j] + tmp;
+                    }
+                    rmatrix3[i][j] = rmatrix3[i][j] + rmatrix2[i][j];
+                }
+            }
+        }
+    }
+
+    for(int i = 0; i < r_num; i++)
+    {
+        for(int j = 0; j < r_num; j++)
+        {
+            printf("matrix: %d : %d \n", i, j);
+            rmatrix3[i][j].show_path_to_packets();
+        }
+    }
+}
+
+void Network::rule_based()
+{
+    Rulebased rulebased;
+    for(uint64_t i = 1; i <= rule_type; i++)
+    {
+        uint64_t portnum = 0;
+        uint32_t router_place = 0;
+        for(uint32_t j = 0; j < r_num; j++)
+        {       
+            router_place = j;
+            string list_str;
+            std::list<uint32_t> router_list;
+            list_str = list_str + to_string(j);
+            router_list.push_back(j);
+            while(1)
+            {
+                printf("%d %d \n", i, router_place);
+                bool flag = true;
+                std::map< uint64_t, std::set<uint64_t>* >::iterator it;
+                it = routers[router_place].port_to_match.begin();
+                while(it != routers[router_place].port_to_match.end())
+                {
+                    std::set<uint64_t>::iterator iter;
+                    iter = (*it->second).find(i);
+                    if(iter != (*it->second).end())
+                    {
+                        portnum = it->first;
+                        flag = false;
+                        break;
+                    }
+                    it++;
+                }
+                if(flag)//to the end
+                    break;
+                router_place = port_to_router[topology[portnum]];
+                list_str = list_str + to_string(router_place);
+                router_list.push_back(router_place);
+                rulebased.set_new_rule(list_str, &router_list, i);
+            }
+        }
+    }
+
+    rulebased.print_rule_map();
 }
