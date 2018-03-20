@@ -130,7 +130,7 @@ int main(int argc, char* argv[])
     load_network_from_dir(json_files_path, &network_example);
 
     network_example.print_topology();
-
+  
     // network_example.init();
     switch (algr) {
         case 1:
@@ -138,6 +138,12 @@ int main(int argc, char* argv[])
             break;
         case 2:
             network_example.warshall_with_path();
+            break;
+        case 3:
+            network_example.segment_based();
+            break;
+        case 4:
+            network_example.rule_based();
             break;
         default:
             printf("1: brutal_force; 2: warshall_record_path\n");

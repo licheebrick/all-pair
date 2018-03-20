@@ -51,8 +51,6 @@ void Reachability::show_path_to_packets()
 Reachability Reachability::operator*(Reachability &reach)
 {
     Reachability insection;
-    std::set<uint64_t> insection_result;
-
     std::list<uint32_t>::iterator it_list;
     std::map<std::list<uint32_t>*, std::set<uint64_t>* >::iterator it1;
     std::map<std::list<uint32_t>*, std::set<uint64_t>* >::iterator it2;
@@ -60,12 +58,12 @@ Reachability Reachability::operator*(Reachability &reach)
     {
         for(it2 = reach.path_to_packets.begin(); it2 != reach.path_to_packets.end(); ++ it2)
         {
+            std::set<uint64_t> insection_result;
             std::set<uint64_t> tmp1 = (*it1->second);
             std::set<uint64_t> tmp2 = (*it2->second);
             std::set_intersection(tmp1.begin(), tmp1.end(), 
                             tmp2.begin(), tmp2.end(), 
                             std::inserter(insection_result, insection_result.begin()));
-
             if(insection_result.empty())
                 continue;
             else

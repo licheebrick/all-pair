@@ -8,6 +8,7 @@
 #include "utils.h"
 #include "router.h"
 #include "reachability.h"
+#include "rulebased.h"
 #include <stdint.h>
 #include <iostream>
 #include <map>
@@ -15,11 +16,12 @@
 #include <set>
 #include <json/json.h>
 #include <bdd.h>
+#include <string>
 
 using namespace std;
 
-const int router_max = 1000;//total
-const int rule_type = 10;   //假设有10种流量
+const uint32_t router_max = 1000;//total
+const uint64_t rule_type = 4;   //假设有10种流量
 
 class Network
 {
@@ -47,6 +49,10 @@ public:
     void display_result(std::set<uint64_t>* rules);
 
     void warshall_with_path();
+
+    void segment_based();
+
+    void rule_based();
 private:
     // map <port_id, another_port_id>
     std::map<uint64_t, uint64_t> topology;
@@ -79,6 +85,7 @@ private:
     static Reachability rmatrix[router_max][router_max];
     static Reachability rmatrix1[router_max][router_max];
     static Reachability rmatrix2[router_max][router_max];
+    static Reachability rmatrix3[router_max][router_max];
 }; 
 
 #endif //WARSHALL_NO_PATH_NETWORK_H
