@@ -234,7 +234,7 @@ void Network::convert_router_to_ap() {
 
 void Network::brutal_force()
 {
-    //init
+    // init
     uint64_t full_array[rule_type];
     for (uint64_t i = 0; i < rule_type; i++)
         full_array[i] = i + 1;
@@ -247,19 +247,22 @@ void Network::brutal_force()
     {
         for(int j = 0; j < r_num; j++)
         {
-            //from i to j
-            printf("~~~~~~~~ search for the path from %d to %d ~~~~~~~~\n", i, j);
-            if(i != j)
+            // from i to j
+            if(i != j) {
+                // TODO: 当前的环路有许多重复的，计划在i!=j时不进行loop输出，而是另做一个i==j的遍历来一次性输出所有loop->不过不太重要就是了
+                printf("Searching for path from router %u to router %u...\n", routers[i].getid(), routers[j].getid());
                 have_been[i] = true;
-            router_stack[stack_place++] = i;
-            dfs_search(i, j, &full_rules);
-            router_stack[stack_place--] = -1;
-            printf("finish this one~\n");
+                router_stack[stack_place++] = i;
+                dfs_search(i, j, &full_rules, true);
+                router_stack[stack_place--] = -1;
+                printf("===\n");
+                memset(have_been, false, router_max);  // clear state
+            }
         }
     }
 }
 
-void Network::dfs_search(int router, int destiny, std::set<uint64_t>* rules)
+void Network::dfs_search(int router, int destiny, std::set<uint64_t>* rules, bool print_loop)
 {
     //我们默认它进入这个函数是不可能相同的
     
@@ -269,14 +272,21 @@ void Network::dfs_search(int router, int destiny, std::set<uint64_t>* rules)
     {
         uint64_t port_num = it->first;
         uint64_t next_port_num = topology[port_num];
-        //有这条边
+
+        // if already traveled(loop discovered), then report it
         if(have_been[port_to_router[next_port_num]])
         {
+            // print loop
+            if (print_loop) {
+                printf("Loop detected, ");
+                router_stack[stack_place++] = port_to_router[next_port_num];
+                display_result(rules);
+                router_stack[stack_place--] = -1;
+            }
             it++;
             continue;
         }
-            
-        //如果到过了就GG
+
         std::set<uint64_t>* new_match;
         new_match = new std::set<uint64_t>;
         std::set_intersection((*rules).begin(), (*rules).end(), 
@@ -287,23 +297,22 @@ void Network::dfs_search(int router, int destiny, std::set<uint64_t>* rules)
         {
             it++;
             continue;
-        }     
-        //如果不为空则可达
-        if(port_to_router[next_port_num] == destiny)
+        }
+
+        if(port_to_router[next_port_num] == destiny)  // if arrive at destiny, then print a path
         {
             router_stack[stack_place++] = destiny;
             display_result(new_match);
             router_stack[stack_place--] = -1;
         }
-        else
+        else // else search deeper
         {
             router_stack[stack_place++] = port_to_router[next_port_num];
             have_been[port_to_router[next_port_num]] = true;
-            dfs_search(port_to_router[next_port_num], destiny, new_match);
+            dfs_search(port_to_router[next_port_num], destiny, new_match, print_loop);
             router_stack[stack_place--] = -1;
             have_been[port_to_router[next_port_num]] = false;
         }
-        //如果刚好到了终点则输出
         delete new_match;
         new_match = NULL;
         it ++;         
@@ -312,12 +321,11 @@ void Network::dfs_search(int router, int destiny, std::set<uint64_t>* rules)
 
 void Network::display_result(std::set<uint64_t>* rules)
 {
-    //display the path and match
-    printf("This path includes router: ");
-    for(int i = 0; i < stack_place; i++)
-        printf("%d ", router_stack[i]);
-
-    printf("with rules: ");
+    //display path and match
+    printf("One path found: [");
+    for(int i = 0; i < stack_place - 1; i++)
+        printf("%u -> ", routers[router_stack[i]].getid());
+    printf("%u], with header: ", routers[router_stack[stack_place - 1]].getid());
     std::set<uint64_t>::iterator it;
     for(it = (*rules).begin(); it != (*rules).end(); it++)
         printf("%llu ", *it);
@@ -441,10 +449,10 @@ void Network::segment_based()
         {
             uint64_t port_num = it->first;
             uint64_t next_port_num = topology[port_num];
-            uint32_t router1 = port_to_router[port_num];
-            uint32_t router2 = port_to_router[next_port_num];
-            uint32_t router_array[] = {router1, router2};
-            std::list<uint32_t> tmp;
+            int router1 = port_to_router[port_num];
+            int router2 = port_to_router[next_port_num];
+            int router_array[] = {router1, router2};
+            std::list<int> tmp;
             tmp.assign(router_array, router_array + 2);
             rmatrix[router1][router2].set_path_to_packets(&tmp, it->second);
             is_height[router1] = true;

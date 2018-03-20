@@ -3,11 +3,15 @@
 /codes/cmake-build-debug/
 /codes/.idea/
 
+/codes/examples/FatTree-8*
+
+*.DS_Store
+.vscode*
+jsonfile
+
 *.o
 *.cbp
 *.cmake
 *Makefile
-
-settings.json
 all_pair
 CMakeCache.txt

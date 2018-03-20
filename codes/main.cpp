@@ -64,10 +64,10 @@ int main(int argc, char* argv[])
 {
     // running configs
     bool do_run_test = true;
-    string json_files_path = "./examples/simple_no_loop";
+    string json_files_path = "./examples/simple_with_loop";
     int hdr_len = 1;    // network header length
     int var_num = 8;    // BDD variable number, usually 8 * hdr_len
-    int algr = 1;       // algorithm used for reachability calculation
+    int algr = 5;       // algorithm used for reachability calculation
 
     for (int i = 1; i < argc; i++) {
         if ( strcmp(argv[i] , "--help") == 0 ) {
@@ -145,8 +145,14 @@ int main(int argc, char* argv[])
         case 4:
             network_example.rule_based();
             break;
+        case 5:
+            network_example.brutal_force();
+            network_example.warshall_with_path();
+//            network_example.segment_based();
+//            network_example.rule_based();
+            break;
         default:
-            printf("1: brutal_force; 2: warshall_record_path; 3: segment_based; 4: rule_based.\n");
+            printf("1: brutal_force; 2: warshall_record_path; 3: segment_based; 4: rule_based; 5: all.\n");
     }
 
     bdd_done();

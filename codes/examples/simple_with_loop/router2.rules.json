@@ -1,0 +1,16 @@
+{
+    "rules": [
+        {
+            "out_ports": [
+                23
+            ],
+            "action": "fwd",
+            "match": "xxxxxxxx"
+        }
+    ],
+    "ports": [
+        21,
+        23
+    ],
+    "id": 2
+}

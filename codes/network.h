@@ -45,7 +45,8 @@ public:
 
     // all pair reachability:
     void brutal_force();
-    void dfs_search(int router, int destiny, std::set<uint64_t>* rules);
+    void dfs_search(int router, int destiny, std::set<uint64_t>* rules, bool print_loop);
+    void dfs_loop_search(int router, int destiny, std::set<uint64_t>* rules);
     void display_result(std::set<uint64_t>* rules);
 
     void warshall_with_path();
