@@ -146,7 +146,7 @@ int main(int argc, char* argv[])
             network_example.rule_based();
             break;
         default:
-            printf("1: brutal_force; 2: warshall_record_path\n");
+            printf("1: brutal_force; 2: warshall_record_path; 3: segment_based; 4: rule_based.\n");
     }
 
     bdd_done();

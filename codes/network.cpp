@@ -44,8 +44,7 @@ void Network::init()
     uint64_t port5[] = {1,4};
     uint64_t port8[] = {1,2,3};
 
-    // TODO:: Why + 2 ?
-    routers[0].port_to_match[1] = new std::set<uint64_t>; 
+    routers[0].port_to_match[1] = new std::set<uint64_t>;
     routers[0].port_to_match[1]->insert(port1, port1 + 2);
     routers[0].port_to_match[2] = new std::set<uint64_t>; 
     routers[0].port_to_match[2]->insert(port2, port2 + 2);
@@ -252,11 +251,8 @@ void Network::brutal_force()
             printf("~~~~~~~~ search for the path from %d to %d ~~~~~~~~\n", i, j);
             if(i != j)
                 have_been[i] = true;
-            // TODO: warning: use 'uint32_t' for signed values of type 'int'
             router_stack[stack_place++] = i;
-            // TODO: warning: use 'uint32_t' for signed values of type 'int'
             dfs_search(i, j, &full_rules);
-            // TODO: warning: use 'uint32_t' for signed values of type 'int'
             router_stack[stack_place--] = -1;
             printf("finish this one~\n");
         }
