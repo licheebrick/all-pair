@@ -61,7 +61,10 @@ void Reachability::delete_all()
 
 Reachability Reachability::operator*(Reachability &reach)
 {
+    //TODO: 这个卡一下
     Reachability insection;
+    if(path_to_packets.empty() || reach.is_empty())
+        return insection;
     std::list<int>::iterator it_list;
     std::map<std::list<int>*, std::set<uint64_t>* >::iterator it1;
     std::map<std::list<int>*, std::set<uint64_t>* >::iterator it2;
@@ -93,12 +96,14 @@ Reachability Reachability::operator*(Reachability &reach)
 
 Reachability Reachability::operator+(Reachability &reach)
 {
+    //TODO: 能不能卡一下？？
     Reachability union_result;
-    std::map<std::list<int>*, std::set<uint64_t>* >::iterator it1;
+    union_result.path_to_packets = path_to_packets;
+    //std::map<std::list<int>*, std::set<uint64_t>* >::iterator it1;
     std::map<std::list<int>*, std::set<uint64_t>* >::iterator it2;
 
-    for(it1 = path_to_packets.begin(); it1 != path_to_packets.end(); ++it1)
-        union_result.path_to_packets[it1->first] = it1->second;
+    // for(it1 = path_to_packets.begin(); it1 != path_to_packets.end(); ++it1)
+    //     union_result.path_to_packets[it1->first] = it1->second;
     for(it2 = reach.path_to_packets.begin(); it2 != reach.path_to_packets.end(); ++it2)
         union_result.path_to_packets[it2->first] = it2->second;
 

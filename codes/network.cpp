@@ -232,7 +232,22 @@ void Network::convert_router_to_ap() {
     printf("-----------------------------------------------------------------\n");
 }
 
-void Network::brutal_force()
+void Network::refresh_matrix()
+{
+    Reachability newone;
+    for(int i = 0; i < r_num; i++)
+    {
+        for(int j = 0; j < r_num; j++)
+        {
+            rmatrix[i][j] = newone;
+            rmatrix1[i][j] = newone;
+            rmatrix2[i][j] = newone;
+            rmatrix3[i][j] = newone;
+        }
+    }
+}
+
+void Network::brutal_force(bool need_print)
 {
     // init
     uint64_t full_array[rule_type];
@@ -249,30 +264,33 @@ void Network::brutal_force()
         {
             // from i to j
             if(i != j) {
-                // TODO: 当前的环路有许多重复的，计划在i!=j时不进行loop输出，而是另做一个i==j的遍历来一次性输出所有loop->不过不太重要就是了
-                printf("Searching for path from router %u to router %u...\n", routers[i].getid(), routers[j].getid());
+                if(need_print)
+                    printf("Searching for path from router %u to router %u...\n", routers[i].getid(), routers[j].getid());
                 have_been[i] = true;
                 router_stack[stack_place++] = i;
-                dfs_search(i, j, &full_rules, false);
+                dfs_search(i, j, &full_rules, false, need_print);
                 router_stack[stack_place--] = -1;
-                printf("===\n");
-                memset(have_been, false, router_max);  // clear state
-            }
-            else
-            {
-                printf("Searching for path from router %u to router %u...\n", routers[i].getid(), routers[j].getid());
-                have_been[i] = true;
-                router_stack[stack_place++] = i;
-                dfs_search(i, j, &full_rules, true);
-                router_stack[stack_place--] = -1;
-                printf("===\n");
+                if(need_print)
+                    printf("===\n");
                 memset(have_been, false, router_max);  // clear state
             }
         }
     }
+    for(int i = 0; i < r_num; i++)
+    {
+        if(need_print)
+            printf("Searching for path from router %u to router %u...\n", routers[i].getid(), routers[i].getid());
+        have_been[i] = true;
+        router_stack[stack_place++] = i;
+        dfs_search(i, i, &full_rules, true, need_print);
+        router_stack[stack_place--] = -1;
+        if(need_print)
+            printf("===\n");
+        memset(have_been, false, router_max);  // clear state
+    }
 }
 
-void Network::dfs_search(int router, int destiny, std::set<uint64_t>* rules, bool print_loop)
+void Network::dfs_search(int router, int destiny, std::set<uint64_t>* rules, bool print_loop, bool need_print)
 {
     //我们默认它进入这个函数是不可能相同的
     
@@ -283,15 +301,13 @@ void Network::dfs_search(int router, int destiny, std::set<uint64_t>* rules, boo
         uint64_t port_num = it->first;
         uint64_t next_port_num = topology[port_num];
 
-        // if already traveled(loop discovered), then report it
         // if arrive at the starting point then report it
         if(have_been[port_to_router[next_port_num]])
         {
             // print loop
             if (print_loop && port_to_router[next_port_num] == destiny) {
-                printf("Loop detected, ");
                 router_stack[stack_place++] = port_to_router[next_port_num];
-                display_result(rules);
+                display_result(rules, need_print);
                 router_stack[stack_place--] = -1;
             }
             it++;
@@ -313,14 +329,14 @@ void Network::dfs_search(int router, int destiny, std::set<uint64_t>* rules, boo
         if(port_to_router[next_port_num] == destiny)  // if arrive at destiny, then print a path
         {
             router_stack[stack_place++] = destiny;
-            display_result(new_match);
+            display_result(new_match, need_print);
             router_stack[stack_place--] = -1;
         }
         else // else search deeper
         {
             router_stack[stack_place++] = port_to_router[next_port_num];
             have_been[port_to_router[next_port_num]] = true;
-            dfs_search(port_to_router[next_port_num], destiny, new_match, print_loop);
+            dfs_search(port_to_router[next_port_num], destiny, new_match, print_loop, need_print);
             router_stack[stack_place--] = -1;
             have_been[port_to_router[next_port_num]] = false;
         }
@@ -330,20 +346,23 @@ void Network::dfs_search(int router, int destiny, std::set<uint64_t>* rules, boo
     }
 }
 
-void Network::display_result(std::set<uint64_t>* rules)
+void Network::display_result(std::set<uint64_t>* rules, bool need_print)
 {
-    //display path and match
-    printf("One path found: [");
-    for(int i = 0; i < stack_place - 1; i++)
-        printf("%u -> ", routers[router_stack[i]].getid());
-    printf("%u], with header: ", routers[router_stack[stack_place - 1]].getid());
-    std::set<uint64_t>::iterator it;
-    for(it = (*rules).begin(); it != (*rules).end(); it++)
-        printf("%llu ", *it);
-    printf("\n");
+    if(need_print)
+    {
+        //display path and match
+        printf("One path found: [");
+        for(int i = 0; i < stack_place - 1; i++)
+            printf("%u -> ", routers[router_stack[i]].getid());
+        printf("%u], with header: ", routers[router_stack[stack_place - 1]].getid());
+        std::set<uint64_t>::iterator it;
+        for(it = (*rules).begin(); it != (*rules).end(); it++)
+            printf("%llu ", *it);
+        printf("\n");
+    }
 }
 
-void Network::warshall_with_path()
+void Network::warshall_with_path(bool need_print)
 {
     //先算一个基本的r0，然后推导到rk
     bool is_height[router_max] = {false};
@@ -410,8 +429,11 @@ void Network::warshall_with_path()
                     {
                         if(!rmatrix1[minimatrix[i][j][0]][minimatrix[i][j][1]].is_empty())
                         {
-                            printf("Loop detected:\n");
-                            rmatrix1[minimatrix[i][j][0]][minimatrix[i][j][1]].show_path_to_packets();
+                            if(need_print)
+                            {
+                                printf("Loop detected:\n");
+                                rmatrix1[minimatrix[i][j][0]][minimatrix[i][j][1]].show_path_to_packets();
+                            }
                             rmatrix1[minimatrix[i][j][0]][minimatrix[i][j][1]].delete_all();
                         }
                     }
@@ -430,8 +452,11 @@ void Network::warshall_with_path()
                     {
                         if(!rmatrix2[minimatrix[i][j][0]][minimatrix[i][j][1]].is_empty())
                         {
-                            printf("Loop detected:\n");
-                            rmatrix2[minimatrix[i][j][0]][minimatrix[i][j][1]].show_path_to_packets();
+                            if(need_print)
+                            {
+                                printf("Loop detected:\n");
+                                rmatrix2[minimatrix[i][j][0]][minimatrix[i][j][1]].show_path_to_packets();
+                            }
                             rmatrix2[minimatrix[i][j][0]][minimatrix[i][j][1]].delete_all();
                         }
                     }
@@ -440,31 +465,34 @@ void Network::warshall_with_path()
         }
     }
 
-    if(r_num % 2 == 0)
+    if(need_print)
     {
-        for(int i = 0; i < r_num; i++)
+        if(r_num % 2 == 0)
         {
-            for(int j = 0; j < r_num; j++)
+            for(int i = 0; i < r_num; i++)
             {
-                printf("matrix: %d : %d \n", i, j);
-                rmatrix1[i][j].show_path_to_packets();
+                for(int j = 0; j < r_num; j++)
+                {
+                    printf("matrix: %d : %d \n", i, j);
+                    rmatrix1[i][j].show_path_to_packets();
+                }
             }
         }
-    }
-    else if(r_num % 2 == 1)
-    {
-        for(int i = 0; i < r_num; i++)
+        else if(r_num % 2 == 1)
         {
-            for(int j = 0; j < r_num; j++)
+            for(int i = 0; i < r_num; i++)
             {
-                printf("matrix: %d : %d \n", i, j);
-                rmatrix2[i][j].show_path_to_packets();
+                for(int j = 0; j < r_num; j++)
+                {
+                    printf("matrix: %d : %d \n", i, j);
+                    rmatrix2[i][j].show_path_to_packets();
+                }
             }
         }
     }
 }
 
-void Network::segment_based()
+void Network::segment_based(bool need_print)
 {
     //先算一个基本的r0，然后推导到rk
     bool is_height[router_max] = {false};
@@ -549,17 +577,20 @@ void Network::segment_based()
         }
     }
 
-    for(int i = 0; i < r_num; i++)
+    if(need_print)
     {
-        for(int j = 0; j < r_num; j++)
+        for(int i = 0; i < r_num; i++)
         {
-            printf("matrix: %d : %d \n", i, j);
-            rmatrix3[i][j].show_path_to_packets();
+            for(int j = 0; j < r_num; j++)
+            {
+                printf("matrix: %d : %d \n", i, j);
+                rmatrix3[i][j].show_path_to_packets();
+            }
         }
     }
 }
 
-void Network::rule_based()
+void Network::rule_based(bool need_print)
 {
     Rulebased rulebased;
     for(uint64_t i = 1; i <= rule_type; i++)
@@ -601,7 +632,6 @@ void Network::rule_based()
                 if(router_place == j)
                 {
                     //loop!
-                    printf("Loop detected:\n");
                     list_str = list_str + to_string(router_place);
                     router_list.push_back(router_place);
                     rulebased.set_new_rule(list_str, &router_list, i);
@@ -620,5 +650,6 @@ void Network::rule_based()
         }
     }
 
-    rulebased.print_rule_map();
+    if(need_print)
+        rulebased.print_rule_map();
 }

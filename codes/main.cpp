@@ -64,7 +64,8 @@ int main(int argc, char* argv[])
 {
     // running configs
     bool do_run_test = true;
-    string json_files_path = "./examples/simple_with_loop";
+    //string json_files_path = "./examples/simple_with_loop";
+    string json_files_path = "./examples/FatTree-4";
     int hdr_len = 1;    // network header length
     int var_num = 8;    // BDD variable number, usually 8 * hdr_len
     int algr = 5;       // algorithm used for reachability calculation
@@ -126,29 +127,40 @@ int main(int argc, char* argv[])
 
     load_network_from_dir(json_files_path, &network_example);
 
-    network_example.print_topology();
+    //network_example.print_topology();
   
-    clock_t startTime,endTime;  
+    clock_t startTime,endTime;
+    clock_t inter_time1, inter_time2, inter_time3, inter_time4;  
     startTime = clock();
     // network_example.init();
     switch (algr) {
         case 1:
-            network_example.brutal_force();
+            network_example.brutal_force(true);
             break;
         case 2:
-            network_example.warshall_with_path();
+            network_example.warshall_with_path(true);
             break;
         case 3:
-            network_example.segment_based();
+            network_example.segment_based(true);
             break;
         case 4:
-            network_example.rule_based();
+            network_example.rule_based(true);
             break;
         case 5:
             network_example.brutal_force();
+            inter_time1 = clock();
+            printf("Totle Time : %f s \n", (double)(inter_time1 - startTime) / CLOCKS_PER_SEC);
             network_example.warshall_with_path();
-//            network_example.segment_based();
-//            network_example.rule_based();
+            inter_time2 = clock();
+            printf("Totle Time : %f s \n", (double)(inter_time2 - inter_time1) / CLOCKS_PER_SEC);
+            network_example.refresh_matrix();
+            inter_time2 = clock();
+            network_example.segment_based();
+            inter_time3 = clock();
+            printf("Totle Time : %f s \n", (double)(inter_time3 - inter_time2) / CLOCKS_PER_SEC);
+            network_example.rule_based();
+            inter_time4 = clock();
+            printf("Totle Time : %f s \n", (double)(inter_time4 - inter_time3) / CLOCKS_PER_SEC);
             break;
         default:
             printf("1: brutal_force; 2: warshall_record_path; 3: segment_based; 4: rule_based; 5: all.\n");
