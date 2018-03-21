@@ -48,6 +48,17 @@ void Reachability::show_path_to_packets()
     }
 }
 
+bool Reachability::is_empty()
+{    
+    return path_to_packets.empty();
+}
+
+void Reachability::delete_all()
+{
+    while (!path_to_packets.empty())
+        path_to_packets.erase(path_to_packets.begin());
+}
+
 Reachability Reachability::operator*(Reachability &reach)
 {
     Reachability insection;

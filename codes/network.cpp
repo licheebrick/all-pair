@@ -253,6 +253,16 @@ void Network::brutal_force()
                 printf("Searching for path from router %u to router %u...\n", routers[i].getid(), routers[j].getid());
                 have_been[i] = true;
                 router_stack[stack_place++] = i;
+                dfs_search(i, j, &full_rules, false);
+                router_stack[stack_place--] = -1;
+                printf("===\n");
+                memset(have_been, false, router_max);  // clear state
+            }
+            else
+            {
+                printf("Searching for path from router %u to router %u...\n", routers[i].getid(), routers[j].getid());
+                have_been[i] = true;
+                router_stack[stack_place++] = i;
                 dfs_search(i, j, &full_rules, true);
                 router_stack[stack_place--] = -1;
                 printf("===\n");
@@ -274,10 +284,11 @@ void Network::dfs_search(int router, int destiny, std::set<uint64_t>* rules, boo
         uint64_t next_port_num = topology[port_num];
 
         // if already traveled(loop discovered), then report it
+        // if arrive at the starting point then report it
         if(have_been[port_to_router[next_port_num]])
         {
             // print loop
-            if (print_loop) {
+            if (print_loop && port_to_router[next_port_num] == destiny) {
                 printf("Loop detected, ");
                 router_stack[stack_place++] = port_to_router[next_port_num];
                 display_result(rules);
@@ -395,6 +406,15 @@ void Network::warshall_with_path()
                 {
                     rmatrix1[minimatrix[i][j][0]][minimatrix[i][j][1]] = rmatrix2[minimatrix[i][j][0]][k] * rmatrix2[k][minimatrix[i][j][1]];
                     rmatrix1[minimatrix[i][j][0]][minimatrix[i][j][1]] = rmatrix1[minimatrix[i][j][0]][minimatrix[i][j][1]] + rmatrix2[minimatrix[i][j][0]][minimatrix[i][j][1]]; 
+                    if(minimatrix[i][j][0] == minimatrix[i][j][1])
+                    {
+                        if(!rmatrix1[minimatrix[i][j][0]][minimatrix[i][j][1]].is_empty())
+                        {
+                            printf("Loop detected:\n");
+                            rmatrix1[minimatrix[i][j][0]][minimatrix[i][j][1]].show_path_to_packets();
+                            rmatrix1[minimatrix[i][j][0]][minimatrix[i][j][1]].delete_all();
+                        }
+                    }
                 }
             }
         }
@@ -406,6 +426,15 @@ void Network::warshall_with_path()
                 {
                     rmatrix2[minimatrix[i][j][0]][minimatrix[i][j][1]] = rmatrix1[minimatrix[i][j][0]][k] * rmatrix1[k][minimatrix[i][j][1]];
                     rmatrix2[minimatrix[i][j][0]][minimatrix[i][j][1]] = rmatrix2[minimatrix[i][j][0]][minimatrix[i][j][1]] + rmatrix1[minimatrix[i][j][0]][minimatrix[i][j][1]];
+                    if(minimatrix[i][j][0] == minimatrix[i][j][1])
+                    {
+                        if(!rmatrix2[minimatrix[i][j][0]][minimatrix[i][j][1]].is_empty())
+                        {
+                            printf("Loop detected:\n");
+                            rmatrix2[minimatrix[i][j][0]][minimatrix[i][j][1]].show_path_to_packets();
+                            rmatrix2[minimatrix[i][j][0]][minimatrix[i][j][1]].delete_all();
+                        }
+                    }
                 }
             }
         }
@@ -482,9 +511,12 @@ void Network::segment_based()
                 {
                     if(!is_width[j])
                         continue;
-                    rmatrix1[i][j] = rmatrix2[i][0] * rmatrix[0][j];
-                    for(int place = 0; place < r_num; place++)
+                    if(i != 0)
+                       rmatrix1[i][j] = rmatrix2[i][0] * rmatrix[0][j];
+                    for(int place = 1; place < r_num; place++)
                     {
+                        if(i == place)
+                            continue;
                         tmp = rmatrix2[i][place] * rmatrix[place][j];
                         rmatrix1[i][j] = rmatrix1[i][j] + tmp;
                     }
@@ -502,9 +534,12 @@ void Network::segment_based()
                 {
                     if(!is_width[j])
                         continue;
-                    rmatrix2[i][j] = rmatrix1[i][0] * rmatrix[0][j];
-                    for(int place = 0; place < r_num; place++)
+                    if(i != 0)
+                        rmatrix2[i][j] = rmatrix1[i][0] * rmatrix[0][j];
+                    for(int place = 1; place < r_num; place++)
                     {
+                        if(i == place)
+                            continue;
                         tmp = rmatrix1[i][place] * rmatrix[place][j];
                         rmatrix2[i][j] = rmatrix2[i][j] + tmp;
                     }
@@ -566,6 +601,7 @@ void Network::rule_based()
                 if(router_place == j)
                 {
                     //loop!
+                    printf("Loop detected:\n");
                     list_str = list_str + to_string(router_place);
                     router_list.push_back(router_place);
                     rulebased.set_new_rule(list_str, &router_list, i);

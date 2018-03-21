@@ -117,9 +117,6 @@ int main(int argc, char* argv[])
         }
     }
 
-    clock_t startTime,endTime;  
-    startTime = clock();
-
     // prepare bdd basics
     bdd_init(100000, 10000);
     bdd_setvarnum(var_num);
@@ -131,6 +128,8 @@ int main(int argc, char* argv[])
 
     network_example.print_topology();
   
+    clock_t startTime,endTime;  
+    startTime = clock();
     // network_example.init();
     switch (algr) {
         case 1:

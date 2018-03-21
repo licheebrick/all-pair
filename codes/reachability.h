@@ -21,6 +21,8 @@ public:
 
     void set_path_to_packets(std::list<int>* set_list, std::set<uint64_t>* set_rules);
     void show_path_to_packets();
+    bool is_empty();
+    void delete_all();
 
     Reachability operator * (Reachability &reach);
     Reachability operator + (Reachability &reach);
