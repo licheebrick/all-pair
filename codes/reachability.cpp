@@ -14,11 +14,11 @@ Reachability::~Reachability()
 
 }
 
-void Reachability::set_path_to_packets(std::list<uint32_t>* set_list, std::set<uint64_t>* set_rules)
+void Reachability::set_path_to_packets(std::list<int>* set_list, std::set<uint64_t>* set_rules)
 {
-    std::list<uint32_t>* new_list;
-    //new_list = (std::list<uint32_t>*)malloc(sizeof(std::list<uint32_t>));
-    new_list = new std::list<uint32_t>;
+    std::list<int>* new_list;
+    //new_list = (std::list<int>*)malloc(sizeof(std::list<int>));
+    new_list = new std::list<int>;
     (*new_list) = (*set_list);
     std::set<uint64_t>* new_rules;
     new_rules = new std::set<uint64_t>;
@@ -28,13 +28,13 @@ void Reachability::set_path_to_packets(std::list<uint32_t>* set_list, std::set<u
 
 void Reachability::show_path_to_packets()
 {
-    std::map<std::list<uint32_t>*, std::set<uint64_t>* >::iterator iter = path_to_packets.begin();  
+    std::map<std::list<int>*, std::set<uint64_t>* >::iterator iter = path_to_packets.begin();  
        
     while(iter != path_to_packets.end())
     {
         printf("This path includes router: ");
-        std::list<uint32_t> tmp = (*iter->first);
-        std::list<uint32_t>::iterator it;
+        std::list<int> tmp = (*iter->first);
+        std::list<int>::iterator it;
         for (it = tmp.begin(); it != tmp.end(); ++it)
             printf("%d ", *it);
 
@@ -48,12 +48,26 @@ void Reachability::show_path_to_packets()
     }
 }
 
+bool Reachability::is_empty()
+{    
+    return path_to_packets.empty();
+}
+
+void Reachability::delete_all()
+{
+    while (!path_to_packets.empty())
+        path_to_packets.erase(path_to_packets.begin());
+}
+
 Reachability Reachability::operator*(Reachability &reach)
 {
+    //TODO: 这个卡一下
     Reachability insection;
-    std::list<uint32_t>::iterator it_list;
-    std::map<std::list<uint32_t>*, std::set<uint64_t>* >::iterator it1;
-    std::map<std::list<uint32_t>*, std::set<uint64_t>* >::iterator it2;
+    if(path_to_packets.empty() || reach.is_empty())
+        return insection;
+    std::list<int>::iterator it_list;
+    std::map<std::list<int>*, std::set<uint64_t>* >::iterator it1;
+    std::map<std::list<int>*, std::set<uint64_t>* >::iterator it2;
     for(it1 = path_to_packets.begin(); it1 != path_to_packets.end(); ++ it1)
     {
         for(it2 = reach.path_to_packets.begin(); it2 != reach.path_to_packets.end(); ++ it2)
@@ -68,8 +82,8 @@ Reachability Reachability::operator*(Reachability &reach)
                 continue;
             else
             {
-                std::list<uint32_t> tmp_list1 = (*it1->first);
-                std::list<uint32_t> tmp_list2 = (*it2->first);
+                std::list<int> tmp_list1 = (*it1->first);
+                std::list<int> tmp_list2 = (*it2->first);
                 it_list = tmp_list2.begin();
                 it_list = tmp_list2.erase(it_list);
                 tmp_list2.splice(it_list, tmp_list1);
@@ -82,12 +96,14 @@ Reachability Reachability::operator*(Reachability &reach)
 
 Reachability Reachability::operator+(Reachability &reach)
 {
+    //TODO: 能不能卡一下？？
     Reachability union_result;
-    std::map<std::list<uint32_t>*, std::set<uint64_t>* >::iterator it1;
-    std::map<std::list<uint32_t>*, std::set<uint64_t>* >::iterator it2;
+    union_result.path_to_packets = path_to_packets;
+    //std::map<std::list<int>*, std::set<uint64_t>* >::iterator it1;
+    std::map<std::list<int>*, std::set<uint64_t>* >::iterator it2;
 
-    for(it1 = path_to_packets.begin(); it1 != path_to_packets.end(); ++it1)
-        union_result.path_to_packets[it1->first] = it1->second;
+    // for(it1 = path_to_packets.begin(); it1 != path_to_packets.end(); ++it1)
+    //     union_result.path_to_packets[it1->first] = it1->second;
     for(it2 = reach.path_to_packets.begin(); it2 != reach.path_to_packets.end(); ++it2)
         union_result.path_to_packets[it2->first] = it2->second;
 

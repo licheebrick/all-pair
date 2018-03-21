@@ -19,13 +19,15 @@ public:
     Reachability();
     ~Reachability();
 
-    void set_path_to_packets(std::list<uint32_t>* set_list, std::set<uint64_t>* set_rules);
+    void set_path_to_packets(std::list<int>* set_list, std::set<uint64_t>* set_rules);
     void show_path_to_packets();
+    bool is_empty();
+    void delete_all();
 
     Reachability operator * (Reachability &reach);
     Reachability operator + (Reachability &reach);
 private:
-    std::map<std::list<uint32_t>*, std::set<uint64_t>* > path_to_packets;
+    std::map<std::list<int>*, std::set<uint64_t>* > path_to_packets;
 };
 
 #endif //WARSHALL_NO_PATH_REACHABLILITY_H

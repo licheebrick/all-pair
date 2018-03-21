@@ -20,7 +20,7 @@
 
 using namespace std;
 
-const uint32_t router_max = 1000;//total
+const int router_max = 1000;//total
 const uint64_t rule_type = 4;   //假设有10种流量
 
 class Network
@@ -43,17 +43,19 @@ public:
     void make_atomic_predicates();
     void convert_router_to_ap();
 
+    void refresh_matrix();
+
     // all pair reachability:
-    void brutal_force();
-    void dfs_search(int router, int destiny, std::set<uint64_t>* rules, bool print_loop);
+    void brutal_force(bool need_print = false);
+    void dfs_search(int router, int destiny, std::set<uint64_t>* rules, bool print_loop, bool need_print = false);
     void dfs_loop_search(int router, int destiny, std::set<uint64_t>* rules);
-    void display_result(std::set<uint64_t>* rules);
+    void display_result(std::set<uint64_t>* rules, bool need_print = false);
 
-    void warshall_with_path();
+    void warshall_with_path(bool need_print = false);
 
-    void segment_based();
+    void segment_based(bool need_print = false);
 
-    void rule_based();
+    void rule_based(bool need_print = false);
 private:
     // map <port_id, another_port_id>
     std::map<uint64_t, uint64_t> topology;
