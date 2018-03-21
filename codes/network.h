@@ -20,7 +20,7 @@
 
 using namespace std;
 
-const uint32_t router_max = 1000;//total
+const int router_max = 1000;//total
 const uint64_t rule_type = 4;   //假设有10种流量
 
 class Network

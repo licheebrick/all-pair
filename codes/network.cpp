@@ -349,7 +349,7 @@ void Network::warshall_with_path()
             int router1 = port_to_router[port_num];
             int router2 = port_to_router[next_port_num];
             int router_array[] = {router1, router2};
-            std::list<uint32_t> tmp;
+            std::list<int> tmp;
             tmp.assign(router_array, router_array + 2);
             rmatrix[router1][router2].set_path_to_packets(&tmp, it->second);
             is_height[router1] = true;
@@ -530,17 +530,21 @@ void Network::rule_based()
     for(uint64_t i = 1; i <= rule_type; i++)
     {
         uint64_t portnum = 0;
-        uint32_t router_place = 0;
-        for(uint32_t j = 0; j < r_num; j++)
+        int router_place = 0;
+        for(int j = 0; j < r_num; j++)
         {       
             router_place = j;
+
             string list_str;
-            std::list<uint32_t> router_list;
+            std::list<int> router_list;
+            bool rhave_been[router_max] = {false};
+
             list_str = list_str + to_string(j);
             router_list.push_back(j);
+            rhave_been[j] = true;
+
             while(1)
             {
-                printf("%d %d \n", i, router_place);
                 bool flag = true;
                 std::map< uint64_t, std::set<uint64_t>* >::iterator it;
                 it = routers[router_place].port_to_match.begin();
@@ -559,8 +563,22 @@ void Network::rule_based()
                 if(flag)//to the end
                     break;
                 router_place = port_to_router[topology[portnum]];
+                if(router_place == j)
+                {
+                    //loop!
+                    list_str = list_str + to_string(router_place);
+                    router_list.push_back(router_place);
+                    rulebased.set_new_rule(list_str, &router_list, i);
+                    break;
+                }
+                else if(rhave_been[router_place])
+                {
+                    //not loop~
+                    break;
+                }
                 list_str = list_str + to_string(router_place);
                 router_list.push_back(router_place);
+                rhave_been[router_place] = true;
                 rulebased.set_new_rule(list_str, &router_list, i);
             }
         }
