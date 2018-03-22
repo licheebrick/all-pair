@@ -252,7 +252,7 @@ void Network::brutal_force(bool need_print)
     // init
     uint64_t full_array[rule_type];
     for (uint64_t i = 0; i < rule_type; i++)
-        full_array[i] = i + 1;
+        full_array[i] = i;
     memset(have_been, false, router_max);
     memset(router_stack, 99999, router_max);
     stack_place = 0;
@@ -379,9 +379,10 @@ void Network::warshall_with_path(bool need_print)
             int router1 = port_to_router[port_num];
             int router2 = port_to_router[next_port_num];
             int router_array[] = {router1, router2};
-            std::list<int> tmp;
-            tmp.assign(router_array, router_array + 2);
-            rmatrix[router1][router2].set_path_to_packets(&tmp, it->second);
+            std::list<int>* tmp;
+            tmp = new std::list<int>;
+            (*tmp).assign(router_array, router_array + 2);
+            rmatrix[router1][router2].set_path_to_packets(&(*tmp), it->second);
             is_height[router1] = true;
             is_width[router2] = true;
             it ++;    
@@ -509,9 +510,10 @@ void Network::segment_based(bool need_print)
             int router1 = port_to_router[port_num];
             int router2 = port_to_router[next_port_num];
             int router_array[] = {router1, router2};
-            std::list<int> tmp;
-            tmp.assign(router_array, router_array + 2);
-            rmatrix[router1][router2].set_path_to_packets(&tmp, it->second);
+            std::list<int>* tmp;
+            tmp = new std::list<int>;
+            (*tmp).assign(router_array, router_array + 2);
+            rmatrix[router1][router2].set_path_to_packets(&(*tmp), it->second);
             is_height[router1] = true;
             is_width[router2] = true;
             it ++;    
@@ -539,7 +541,10 @@ void Network::segment_based(bool need_print)
                 {
                     if(!is_width[j])
                         continue;
-                    rmatrix1[i][j] = rmatrix2[i][0] * rmatrix[0][j];
+                    if(i != 0)
+                        rmatrix1[i][j] = rmatrix2[i][0] * rmatrix[0][j];
+                    else
+                        rmatrix1[i][j].delete_all();
                     for(int place = 1; place < r_num; place++)
                     {
                         if(i == place)
@@ -563,7 +568,10 @@ void Network::segment_based(bool need_print)
                 {
                     if(!is_width[j])
                         continue;
-                    rmatrix2[i][j] = rmatrix1[i][0] * rmatrix[0][j];
+                    if(i != 0)
+                        rmatrix2[i][j] = rmatrix1[i][0] * rmatrix[0][j];
+                    else
+                        rmatrix2[i][j].delete_all();
                     for(int place = 1; place < r_num; place++)
                     {
                         if(i == place)

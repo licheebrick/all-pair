@@ -16,14 +16,14 @@ Reachability::~Reachability()
 
 void Reachability::set_path_to_packets(std::list<int>* set_list, std::set<uint64_t>* set_rules)
 {
-    std::list<int>* new_list;
-    //new_list = (std::list<int>*)malloc(sizeof(std::list<int>));
-    new_list = new std::list<int>;
-    (*new_list) = (*set_list);
-    std::set<uint64_t>* new_rules;
-    new_rules = new std::set<uint64_t>;
-    (*new_rules) = (*set_rules);
-    path_to_packets[new_list] = new_rules;
+    // std::list<int>* new_list;
+    // //new_list = (std::list<int>*)malloc(sizeof(std::list<int>));
+    // new_list = new std::list<int>;
+    // (*new_list) = (*set_list);
+    // std::set<uint64_t>* new_rules;
+    // new_rules = new std::set<uint64_t>;
+    // (*new_rules) = (*set_rules);
+    path_to_packets[set_list] = set_rules;
 }
 
 void Reachability::show_path_to_packets()
@@ -72,22 +72,25 @@ Reachability Reachability::operator*(Reachability &reach)
     {
         for(it2 = reach.path_to_packets.begin(); it2 != reach.path_to_packets.end(); ++ it2)
         {
-            std::set<uint64_t> insection_result;
+            std::set<uint64_t>* insection_result;
+            insection_result = new std::set<uint64_t>;
             //std::set<uint64_t> tmp1 = (*it1->second);
             //std::set<uint64_t> tmp2 = (*it2->second);
             std::set_intersection((*it1->second).begin(), (*it1->second).end(), 
                             (*it2->second).begin(), (*it2->second).end(), 
-                            std::inserter(insection_result, insection_result.begin()));
-            if(insection_result.empty())
+                            std::inserter(*insection_result, (*insection_result).begin()));
+            if((*insection_result).empty())
                 continue;
             else
             {
                 std::list<int> tmp_list1 = (*it1->first);
-                std::list<int> tmp_list2 = (*it2->first);
-                it_list = tmp_list2.begin();
-                it_list = tmp_list2.erase(it_list);
-                tmp_list2.splice(it_list, tmp_list1);
-                insection.set_path_to_packets(&tmp_list2, &insection_result);
+                std::list<int>* tmp_list2; 
+                tmp_list2 = new std::list<int>;
+                (*tmp_list2) = (*it2->first);
+                it_list = (*tmp_list2).begin();
+                it_list = (*tmp_list2).erase(it_list);
+                (*tmp_list2).splice(it_list, tmp_list1);
+                insection.set_path_to_packets(&(*tmp_list2), &(*insection_result));
             }
         }
     }   
