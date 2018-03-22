@@ -24,16 +24,21 @@ public:
     ~Reachability();
 
     void set_path_to_packets(std::list<int>* set_list, std::set<uint64_t>* set_rules);
+    void set_rules(std::set<uint64_t>* set_rules);
     void show_path_to_packets();
+    void show_rules();
     bool is_empty();
     void delete_all();
 
     Reachability operator * (Reachability &reach);
     Reachability operator + (Reachability &reach);
+    Reachability operator / (Reachability &reach);//no path!
+    Reachability operator - (Reachability &reach);
     //static int r_place;
 private:
     std::map<std::list<int>*, std::set<uint64_t>* > path_to_packets;
 
+    std::set<uint64_t> rules;
     // static std::list<int> reach_list[100000];
     // static std::set<uint64_t> reach_set[100000];
 

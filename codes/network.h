@@ -56,6 +56,10 @@ public:
     void segment_based(bool need_print = false);
 
     void rule_based(bool need_print = false);
+
+    void warshall_no_path(bool need_print = false);
+
+    void segment_no_path(bool need_print = false);
 private:
     // map <port_id, another_port_id>
     std::map<uint64_t, uint64_t> topology;

@@ -23,7 +23,13 @@ void Reachability::set_path_to_packets(std::list<int>* set_list, std::set<uint64
     // std::set<uint64_t>* new_rules;
     // new_rules = new std::set<uint64_t>;
     // (*new_rules) = (*set_rules);
+    // path_to_packets[new_list] = new_rules;
     path_to_packets[set_list] = set_rules;
+}
+
+void Reachability::set_rules(std::set<uint64_t>* set_rules)
+{
+    rules = *set_rules;
 }
 
 void Reachability::show_path_to_packets()
@@ -46,6 +52,19 @@ void Reachability::show_path_to_packets()
         printf("\n");
         iter ++;         
     }
+}
+
+void Reachability::show_rules()
+{
+    std::set<uint64_t>::iterator iter = rules.begin();  
+      
+    printf("Rules: ");
+    while(iter!=rules.end())  
+    {  
+        printf("%llu ", *iter);
+        ++iter;  
+    }  
+    printf("\n");
 }
 
 bool Reachability::is_empty()
@@ -113,3 +132,24 @@ Reachability Reachability::operator+(Reachability &reach)
     return union_result;
 }
 
+Reachability Reachability::operator/(Reachability &reach)
+{
+    Reachability insection;
+    std::set<uint64_t> insection_result;
+    std::set_intersection(rules.begin(), rules.end(), 
+                            reach.rules.begin(), reach.rules.end(), 
+                            std::inserter(insection_result, insection_result.begin()));
+    insection.set_rules(&insection_result);
+    return insection;
+}
+
+Reachability Reachability::operator-(Reachability &reach)
+{
+    Reachability insection;
+    std::set<uint64_t> insection_result;
+    std::set_union(rules.begin(), rules.end(), 
+                            reach.rules.begin(), reach.rules.end(), 
+                            std::inserter(insection_result, insection_result.begin()));
+    insection.set_rules(&insection_result);
+    return insection;
+}

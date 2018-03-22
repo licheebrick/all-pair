@@ -64,7 +64,7 @@ int main(int argc, char* argv[])
     // running configs
     bool do_run_test = true;
     int algr = 5;       // algorithm used for reachability calculation
-    int dataset = 3;
+    int dataset = 2;
 
     // test suite:
     string file_path[4] = {"./examples/simple_with_loop", "./examples/FatTree-4",
@@ -136,7 +136,7 @@ int main(int argc, char* argv[])
     //network_example.print_topology();
   
     clock_t startTime,endTime;
-    clock_t inter_time1, inter_time2, inter_time3, inter_time4;  
+    clock_t inter_time1, inter_time2, inter_time3, inter_time4, inter_time5, inter_time6;  
     startTime = clock();
     // network_example.init();
     switch (algr) {
@@ -153,6 +153,12 @@ int main(int argc, char* argv[])
             network_example.rule_based(true);
             break;
         case 5:
+            network_example.warshall_no_path(true);
+            break;
+        case 6:
+            network_example.segment_no_path(true);
+            break;
+        case 7:
             network_example.brutal_force();
             inter_time1 = clock();
             printf("Total Time : %f s \n", (double)(inter_time1 - startTime) / CLOCKS_PER_SEC);
@@ -167,9 +173,15 @@ int main(int argc, char* argv[])
             network_example.rule_based();
             inter_time4 = clock();
             printf("Total Time : %f s \n", (double)(inter_time4 - inter_time3) / CLOCKS_PER_SEC);
+            network_example.warshall_no_path();
+            inter_time5 = clock();
+            printf("Total Time : %f s \n", (double)(inter_time5 - inter_time4) / CLOCKS_PER_SEC);
+            network_example.segment_no_path();
+            inter_time6 = clock();
+            printf("Total Time : %f s \n", (double)(inter_time6 - inter_time5) / CLOCKS_PER_SEC);
             break;
         default:
-            printf("1: brutal_force; 2: warshall_record_path; 3: segment_based; 4: rule_based; 5: all.\n");
+            printf("1: brutal_force; 2: warshall_record_path; 3: segment_based; 4: rule_based; 5:warshall_no_path; 7: all.\n");
     }
 
     bdd_done();
