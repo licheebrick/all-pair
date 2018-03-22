@@ -200,7 +200,7 @@ void Network::make_atomic_predicates() {
     if (show_detail) {
         printf("These %lu atomic predicates are as follows:\n", this->ap_bdd_list->size());
         for (size_t i = 0; i < this->ap_bdd_list->size(); i++) {
-            printf("Predicate %lu:\n", i);
+            //printf("Predicate %lu:\n", i);
             bdd_allsat(this->ap_bdd_list->at(i), allsatPrintHandler);
         }
     }
@@ -539,11 +539,12 @@ void Network::segment_based(bool need_print)
                 {
                     if(!is_width[j])
                         continue;
-                    if(i != 0)
-                       rmatrix1[i][j] = rmatrix2[i][0] * rmatrix[0][j];
+                    rmatrix1[i][j] = rmatrix2[i][0] * rmatrix[0][j];
                     for(int place = 1; place < r_num; place++)
                     {
                         if(i == place)
+                            continue;
+                        if(rmatrix2[i][place].is_empty())
                             continue;
                         tmp = rmatrix2[i][place] * rmatrix[place][j];
                         rmatrix1[i][j] = rmatrix1[i][j] + tmp;
@@ -562,11 +563,12 @@ void Network::segment_based(bool need_print)
                 {
                     if(!is_width[j])
                         continue;
-                    if(i != 0)
-                        rmatrix2[i][j] = rmatrix1[i][0] * rmatrix[0][j];
+                    rmatrix2[i][j] = rmatrix1[i][0] * rmatrix[0][j];
                     for(int place = 1; place < r_num; place++)
                     {
                         if(i == place)
+                            continue;
+                        if(rmatrix1[i][place].is_empty())
                             continue;
                         tmp = rmatrix1[i][place] * rmatrix[place][j];
                         rmatrix2[i][j] = rmatrix2[i][j] + tmp;

@@ -73,10 +73,10 @@ Reachability Reachability::operator*(Reachability &reach)
         for(it2 = reach.path_to_packets.begin(); it2 != reach.path_to_packets.end(); ++ it2)
         {
             std::set<uint64_t> insection_result;
-            std::set<uint64_t> tmp1 = (*it1->second);
-            std::set<uint64_t> tmp2 = (*it2->second);
-            std::set_intersection(tmp1.begin(), tmp1.end(), 
-                            tmp2.begin(), tmp2.end(), 
+            //std::set<uint64_t> tmp1 = (*it1->second);
+            //std::set<uint64_t> tmp2 = (*it2->second);
+            std::set_intersection((*it1->second).begin(), (*it1->second).end(), 
+                            (*it2->second).begin(), (*it2->second).end(), 
                             std::inserter(insection_result, insection_result.begin()));
             if(insection_result.empty())
                 continue;
