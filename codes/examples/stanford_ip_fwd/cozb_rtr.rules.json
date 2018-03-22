@@ -1,0 +1,1030 @@
+{
+ "rules": [
+  {
+   "out_ports": [
+    620006
+   ], 
+   "action": "fwd", 
+   "match": "xxxxxxxx,xxxxxxxx,xxxxxxxx,xxxxxxxx"
+  }, 
+  {
+   "out_ports": [], 
+   "action": "fwd", 
+   "match": "111xxxxx,xxxxxxxx,xxxxxxxx,xxxxxxxx"
+  }, 
+  {
+   "out_ports": [], 
+   "action": "fwd", 
+   "match": "01111111,xxxxxxxx,xxxxxxxx,xxxxxxxx"
+  }, 
+  {
+   "out_ports": [
+    620001
+   ], 
+   "action": "fwd", 
+   "match": "00001010,xxxxxxxx,xxxxxxxx,xxxxxxxx"
+  }, 
+  {
+   "out_ports": [], 
+   "action": "fwd", 
+   "match": "00000000,xxxxxxxx,xxxxxxxx,xxxxxxxx"
+  }, 
+  {
+   "out_ports": [
+    620001
+   ], 
+   "action": "fwd", 
+   "match": "10101100,0001xxxx,xxxxxxxx,xxxxxxxx"
+  }, 
+  {
+   "out_ports": [
+    620001
+   ], 
+   "action": "fwd", 
+   "match": "10101011,010000xx,xxxxxxxx,xxxxxxxx"
+  }, 
+  {
+   "out_ports": [
+    620001
+   ], 
+   "action": "fwd", 
+   "match": "11000000,10101000,xxxxxxxx,xxxxxxxx"
+  }, 
+  {
+   "out_ports": [], 
+   "action": "fwd", 
+   "match": "10101001,11111110,xxxxxxxx,xxxxxxxx"
+  }, 
+  {
+   "out_ports": [], 
+   "action": "fwd", 
+   "match": "10000000,00001100,xxxxxxxx,xxxxxxxx"
+  }, 
+  {
+   "out_ports": [
+    620004
+   ], 
+   "action": "fwd", 
+   "match": "10101100,00010000,01xxxxxx,xxxxxxxx"
+  }, 
+  {
+   "out_ports": [], 
+   "action": "fwd", 
+   "match": "10101100,00010011,010xxxxx,xxxxxxxx"
+  }, 
+  {
+   "out_ports": [
+    620001
+   ], 
+   "action": "fwd", 
+   "match": "10000000,00001100,001xxxxx,xxxxxxxx"
+  }, 
+  {
+   "out_ports": [
+    620005, 
+    620007, 
+    620002, 
+    620003
+   ], 
+   "action": "fwd", 
+   "match": "00001010,00011110,100xxxxx,xxxxxxxx"
+  }, 
+  {
+   "out_ports": [
+    620005, 
+    620007, 
+    620002, 
+    620003
+   ], 
+   "action": "fwd", 
+   "match": "00001010,00011110,011xxxxx,xxxxxxxx"
+  }, 
+  {
+   "out_ports": [
+    620005, 
+    620007, 
+    620002, 
+    620003
+   ], 
+   "action": "fwd", 
+   "match": "00001010,00011110,010xxxxx,xxxxxxxx"
+  }, 
+  {
+   "out_ports": [
+    620005, 
+    620007, 
+    620002, 
+    620003
+   ], 
+   "action": "fwd", 
+   "match": "00001010,00011110,001xxxxx,xxxxxxxx"
+  }, 
+  {
+   "out_ports": [
+    620005, 
+    620007, 
+    620002, 
+    620003
+   ], 
+   "action": "fwd", 
+   "match": "00001010,00011110,000xxxxx,xxxxxxxx"
+  }, 
+  {
+   "out_ports": [
+    620001
+   ], 
+   "action": "fwd", 
+   "match": "10000000,00001100,1111xxxx,xxxxxxxx"
+  }, 
+  {
+   "out_ports": [
+    620007
+   ], 
+   "action": "fwd", 
+   "match": "10000000,00001100,1110xxxx,xxxxxxxx"
+  }, 
+  {
+   "out_ports": [
+    620007
+   ], 
+   "action": "fwd", 
+   "match": "10000000,00001100,1010xxxx,xxxxxxxx"
+  }, 
+  {
+   "out_ports": [
+    620007
+   ], 
+   "action": "fwd", 
+   "match": "10000000,00001100,1001xxxx,xxxxxxxx"
+  }, 
+  {
+   "out_ports": [
+    620001
+   ], 
+   "action": "fwd", 
+   "match": "10000000,00001100,0110xxxx,xxxxxxxx"
+  }, 
+  {
+   "out_ports": [
+    620001
+   ], 
+   "action": "fwd", 
+   "match": "10000000,00001100,0100xxxx,xxxxxxxx"
+  }, 
+  {
+   "out_ports": [
+    620005
+   ], 
+   "action": "fwd", 
+   "match": "00001010,00111111,0001xxxx,xxxxxxxx"
+  }, 
+  {
+   "out_ports": [], 
+   "action": "fwd", 
+   "match": "10101100,00010011,00101xxx,xxxxxxxx"
+  }, 
+  {
+   "out_ports": [
+    620001
+   ], 
+   "action": "fwd", 
+   "match": "10000000,00001100,11010xxx,xxxxxxxx"
+  }, 
+  {
+   "out_ports": [
+    620007
+   ], 
+   "action": "fwd", 
+   "match": "10000000,00001100,10110xxx,xxxxxxxx"
+  }, 
+  {
+   "out_ports": [
+    620007
+   ], 
+   "action": "fwd", 
+   "match": "10000000,00001100,10001xxx,xxxxxxxx"
+  }, 
+  {
+   "out_ports": [
+    620001
+   ], 
+   "action": "fwd", 
+   "match": "10000000,00001100,01110xxx,xxxxxxxx"
+  }, 
+  {
+   "out_ports": [
+    620001
+   ], 
+   "action": "fwd", 
+   "match": "10000000,00001100,01011xxx,xxxxxxxx"
+  }, 
+  {
+   "out_ports": [
+    620001
+   ], 
+   "action": "fwd", 
+   "match": "10000000,00001100,00011xxx,xxxxxxxx"
+  }, 
+  {
+   "out_ports": [], 
+   "action": "fwd", 
+   "match": "10101100,00010011,011000xx,xxxxxxxx"
+  }, 
+  {
+   "out_ports": [
+    620001
+   ], 
+   "action": "fwd", 
+   "match": "10000000,00001100,110110xx,xxxxxxxx"
+  }, 
+  {
+   "out_ports": [
+    620001
+   ], 
+   "action": "fwd", 
+   "match": "10000000,00001100,110011xx,xxxxxxxx"
+  }, 
+  {
+   "out_ports": [
+    620001
+   ], 
+   "action": "fwd", 
+   "match": "10000000,00001100,110000xx,xxxxxxxx"
+  }, 
+  {
+   "out_ports": [
+    620007
+   ], 
+   "action": "fwd", 
+   "match": "10000000,00001100,101111xx,xxxxxxxx"
+  }, 
+  {
+   "out_ports": [
+    620007
+   ], 
+   "action": "fwd", 
+   "match": "10000000,00001100,100001xx,xxxxxxxx"
+  }, 
+  {
+   "out_ports": [
+    620001
+   ], 
+   "action": "fwd", 
+   "match": "10000000,00001100,011110xx,xxxxxxxx"
+  }, 
+  {
+   "out_ports": [
+    620001
+   ], 
+   "action": "fwd", 
+   "match": "10000000,00001100,010100xx,xxxxxxxx"
+  }, 
+  {
+   "out_ports": [
+    620001
+   ], 
+   "action": "fwd", 
+   "match": "10000000,00001100,000101xx,xxxxxxxx"
+  }, 
+  {
+   "out_ports": [
+    620001
+   ], 
+   "action": "fwd", 
+   "match": "10000000,00001100,000010xx,xxxxxxxx"
+  }, 
+  {
+   "out_ports": [
+    620006
+   ], 
+   "action": "fwd", 
+   "match": "10101100,00010100,0000011x,xxxxxxxx"
+  }, 
+  {
+   "out_ports": [
+    620001
+   ], 
+   "action": "fwd", 
+   "match": "10101100,00010100,0000010x,xxxxxxxx"
+  }, 
+  {
+   "out_ports": [
+    620005, 
+    620007, 
+    620002, 
+    620003
+   ], 
+   "action": "fwd", 
+   "match": "10101100,00010011,1010001x,xxxxxxxx"
+  }, 
+  {
+   "out_ports": [
+    620005, 
+    620007, 
+    620002, 
+    620003
+   ], 
+   "action": "fwd", 
+   "match": "10101100,00010011,1010000x,xxxxxxxx"
+  }, 
+  {
+   "out_ports": [
+    620005, 
+    620007, 
+    620002, 
+    620003
+   ], 
+   "action": "fwd", 
+   "match": "10101100,00010011,1001111x,xxxxxxxx"
+  }, 
+  {
+   "out_ports": [
+    620005, 
+    620007, 
+    620002, 
+    620003
+   ], 
+   "action": "fwd", 
+   "match": "10101100,00010011,1001110x,xxxxxxxx"
+  }, 
+  {
+   "out_ports": [
+    620005, 
+    620007, 
+    620002, 
+    620003
+   ], 
+   "action": "fwd", 
+   "match": "10101100,00010011,1001101x,xxxxxxxx"
+  }, 
+  {
+   "out_ports": [
+    620001
+   ], 
+   "action": "fwd", 
+   "match": "10101100,00010011,0100111x,xxxxxxxx"
+  }, 
+  {
+   "out_ports": [
+    620005, 
+    620007, 
+    620002, 
+    620003
+   ], 
+   "action": "fwd", 
+   "match": "10101100,00010011,0100011x,xxxxxxxx"
+  }, 
+  {
+   "out_ports": [
+    620007
+   ], 
+   "action": "fwd", 
+   "match": "10000000,00001100,1101111x,xxxxxxxx"
+  }, 
+  {
+   "out_ports": [
+    620001
+   ], 
+   "action": "fwd", 
+   "match": "10000000,00001100,1101110x,xxxxxxxx"
+  }, 
+  {
+   "out_ports": [
+    620007
+   ], 
+   "action": "fwd", 
+   "match": "10000000,00001100,1100100x,xxxxxxxx"
+  }, 
+  {
+   "out_ports": [
+    620007
+   ], 
+   "action": "fwd", 
+   "match": "10000000,00001100,1100011x,xxxxxxxx"
+  }, 
+  {
+   "out_ports": [
+    620001
+   ], 
+   "action": "fwd", 
+   "match": "10000000,00001100,1100010x,xxxxxxxx"
+  }, 
+  {
+   "out_ports": [
+    620007
+   ], 
+   "action": "fwd", 
+   "match": "10000000,00001100,1000001x,xxxxxxxx"
+  }, 
+  {
+   "out_ports": [
+    620007
+   ], 
+   "action": "fwd", 
+   "match": "10000000,00001100,0001001x,xxxxxxxx"
+  }, 
+  {
+   "out_ports": [
+    620007
+   ], 
+   "action": "fwd", 
+   "match": "10000000,00001100,0000111x,xxxxxxxx"
+  }, 
+  {
+   "out_ports": [
+    620001
+   ], 
+   "action": "fwd", 
+   "match": "10000000,00001100,0000110x,xxxxxxxx"
+  }, 
+  {
+   "out_ports": [
+    620001
+   ], 
+   "action": "fwd", 
+   "match": "10000000,00001100,0000011x,xxxxxxxx"
+  }, 
+  {
+   "out_ports": [
+    620006
+   ], 
+   "action": "fwd", 
+   "match": "10101100,00010100,00000011,xxxxxxxx"
+  }, 
+  {
+   "out_ports": [
+    620002
+   ], 
+   "action": "fwd", 
+   "match": "10101100,00010011,11111110,xxxxxxxx"
+  }, 
+  {
+   "out_ports": [
+    620005, 
+    620007, 
+    620002, 
+    620003
+   ], 
+   "action": "fwd", 
+   "match": "10101100,00010011,01010110,xxxxxxxx"
+  }, 
+  {
+   "out_ports": [
+    620005, 
+    620007, 
+    620002, 
+    620003
+   ], 
+   "action": "fwd", 
+   "match": "10101100,00010011,01010101,xxxxxxxx"
+  }, 
+  {
+   "out_ports": [
+    620005, 
+    620007, 
+    620002, 
+    620003
+   ], 
+   "action": "fwd", 
+   "match": "10101100,00010011,01010100,xxxxxxxx"
+  }, 
+  {
+   "out_ports": [
+    620005, 
+    620007, 
+    620002, 
+    620003
+   ], 
+   "action": "fwd", 
+   "match": "10101100,00010011,01010011,xxxxxxxx"
+  }, 
+  {
+   "out_ports": [
+    620005, 
+    620007, 
+    620002, 
+    620003
+   ], 
+   "action": "fwd", 
+   "match": "10101100,00010011,01010010,xxxxxxxx"
+  }, 
+  {
+   "out_ports": [
+    620005, 
+    620007, 
+    620002, 
+    620003
+   ], 
+   "action": "fwd", 
+   "match": "10101100,00010011,01010001,xxxxxxxx"
+  }, 
+  {
+   "out_ports": [
+    620005, 
+    620007, 
+    620002, 
+    620003
+   ], 
+   "action": "fwd", 
+   "match": "10101100,00010011,01001101,xxxxxxxx"
+  }, 
+  {
+   "out_ports": [
+    620005, 
+    620007, 
+    620002, 
+    620003
+   ], 
+   "action": "fwd", 
+   "match": "10101100,00010011,01001100,xxxxxxxx"
+  }, 
+  {
+   "out_ports": [
+    620005, 
+    620007, 
+    620002, 
+    620003
+   ], 
+   "action": "fwd", 
+   "match": "10101100,00010011,01001011,xxxxxxxx"
+  }, 
+  {
+   "out_ports": [
+    620005, 
+    620007, 
+    620002, 
+    620003
+   ], 
+   "action": "fwd", 
+   "match": "10101100,00010011,01001010,xxxxxxxx"
+  }, 
+  {
+   "out_ports": [
+    620005, 
+    620007, 
+    620002, 
+    620003
+   ], 
+   "action": "fwd", 
+   "match": "10101100,00010011,01001001,xxxxxxxx"
+  }, 
+  {
+   "out_ports": [
+    620005, 
+    620007, 
+    620002, 
+    620003
+   ], 
+   "action": "fwd", 
+   "match": "10101100,00010011,01001000,xxxxxxxx"
+  }, 
+  {
+   "out_ports": [
+    620005, 
+    620007, 
+    620002, 
+    620003
+   ], 
+   "action": "fwd", 
+   "match": "10101100,00010011,01000101,xxxxxxxx"
+  }, 
+  {
+   "out_ports": [
+    620005, 
+    620007, 
+    620002, 
+    620003
+   ], 
+   "action": "fwd", 
+   "match": "10101100,00010011,01000100,xxxxxxxx"
+  }, 
+  {
+   "out_ports": [
+    620005, 
+    620007, 
+    620002, 
+    620003
+   ], 
+   "action": "fwd", 
+   "match": "10101100,00010011,01000011,xxxxxxxx"
+  }, 
+  {
+   "out_ports": [
+    620005, 
+    620007, 
+    620002, 
+    620003
+   ], 
+   "action": "fwd", 
+   "match": "10101100,00010011,01000010,xxxxxxxx"
+  }, 
+  {
+   "out_ports": [
+    620005, 
+    620007, 
+    620002, 
+    620003
+   ], 
+   "action": "fwd", 
+   "match": "10101100,00010011,01000001,xxxxxxxx"
+  }, 
+  {
+   "out_ports": [
+    620005, 
+    620007, 
+    620002, 
+    620003
+   ], 
+   "action": "fwd", 
+   "match": "10101100,00010011,01000000,xxxxxxxx"
+  }, 
+  {
+   "out_ports": [
+    620005, 
+    620007, 
+    620002, 
+    620003
+   ], 
+   "action": "fwd", 
+   "match": "10101100,00010011,00101010,xxxxxxxx"
+  }, 
+  {
+   "out_ports": [
+    620005, 
+    620007, 
+    620002, 
+    620003
+   ], 
+   "action": "fwd", 
+   "match": "10101100,00010011,00101001,xxxxxxxx"
+  }, 
+  {
+   "out_ports": [
+    620005, 
+    620007, 
+    620002, 
+    620003
+   ], 
+   "action": "fwd", 
+   "match": "10101100,00010011,00101000,xxxxxxxx"
+  }, 
+  {
+   "out_ports": [
+    620007
+   ], 
+   "action": "fwd", 
+   "match": "10000000,00001100,11001010,xxxxxxxx"
+  }, 
+  {
+   "out_ports": [
+    620007
+   ], 
+   "action": "fwd", 
+   "match": "10101100,00010011,11111000,1xxxxxxx"
+  }, 
+  {
+   "out_ports": [
+    620005, 
+    620007, 
+    620002, 
+    620003
+   ], 
+   "action": "fwd", 
+   "match": "10101100,00010011,01100001,00xxxxxx"
+  }, 
+  {
+   "out_ports": [], 
+   "action": "fwd", 
+   "match": "10101100,00011010,00000100,001xxxxx"
+  }, 
+  {
+   "out_ports": [
+    620007, 
+    620008, 
+    620002
+   ], 
+   "action": "fwd", 
+   "match": "10101100,00010100,00001010,001xxxxx"
+  }, 
+  {
+   "out_ports": [
+    620005, 
+    620007, 
+    620002, 
+    620003
+   ], 
+   "action": "fwd", 
+   "match": "10101100,00010011,01100010,110xxxxx"
+  }, 
+  {
+   "out_ports": [
+    620005, 
+    620007, 
+    620002, 
+    620003
+   ], 
+   "action": "fwd", 
+   "match": "10101100,00010011,01100010,101xxxxx"
+  }, 
+  {
+   "out_ports": [
+    620005, 
+    620007, 
+    620002, 
+    620003
+   ], 
+   "action": "fwd", 
+   "match": "10101100,00010011,01100010,100xxxxx"
+  }, 
+  {
+   "out_ports": [
+    620005, 
+    620007, 
+    620002, 
+    620003
+   ], 
+   "action": "fwd", 
+   "match": "10101100,00010011,01100010,011xxxxx"
+  }, 
+  {
+   "out_ports": [
+    620005, 
+    620007, 
+    620002, 
+    620003
+   ], 
+   "action": "fwd", 
+   "match": "10101100,00010011,01100010,010xxxxx"
+  }, 
+  {
+   "out_ports": [
+    620005, 
+    620007, 
+    620002, 
+    620003
+   ], 
+   "action": "fwd", 
+   "match": "10101100,00010011,01100010,001xxxxx"
+  }, 
+  {
+   "out_ports": [
+    620005, 
+    620007, 
+    620002, 
+    620003
+   ], 
+   "action": "fwd", 
+   "match": "10101100,00010011,01100010,000xxxxx"
+  }, 
+  {
+   "out_ports": [
+    620005, 
+    620007, 
+    620002, 
+    620003
+   ], 
+   "action": "fwd", 
+   "match": "10101100,00010011,01100001,111xxxxx"
+  }, 
+  {
+   "out_ports": [
+    620005, 
+    620007, 
+    620002, 
+    620003
+   ], 
+   "action": "fwd", 
+   "match": "10101100,00010011,01100001,110xxxxx"
+  }, 
+  {
+   "out_ports": [
+    620005, 
+    620007, 
+    620002, 
+    620003
+   ], 
+   "action": "fwd", 
+   "match": "10101100,00010011,01100001,101xxxxx"
+  }, 
+  {
+   "out_ports": [
+    620005, 
+    620007, 
+    620002, 
+    620003
+   ], 
+   "action": "fwd", 
+   "match": "10101100,00010011,01100001,100xxxxx"
+  }, 
+  {
+   "out_ports": [
+    620005, 
+    620007, 
+    620002, 
+    620003
+   ], 
+   "action": "fwd", 
+   "match": "10101100,00010011,01100001,011xxxxx"
+  }, 
+  {
+   "out_ports": [
+    620005, 
+    620007, 
+    620002, 
+    620003
+   ], 
+   "action": "fwd", 
+   "match": "10101100,00010011,01100001,010xxxxx"
+  }, 
+  {
+   "out_ports": [
+    620005, 
+    620007, 
+    620002, 
+    620003
+   ], 
+   "action": "fwd", 
+   "match": "10101100,00010011,01100000,111xxxxx"
+  }, 
+  {
+   "out_ports": [
+    620005, 
+    620007, 
+    620002, 
+    620003
+   ], 
+   "action": "fwd", 
+   "match": "10101100,00010011,01100000,110xxxxx"
+  }, 
+  {
+   "out_ports": [
+    620005, 
+    620007, 
+    620002, 
+    620003
+   ], 
+   "action": "fwd", 
+   "match": "10101100,00010011,01100000,101xxxxx"
+  }, 
+  {
+   "out_ports": [
+    620005, 
+    620007, 
+    620002, 
+    620003
+   ], 
+   "action": "fwd", 
+   "match": "10101100,00010011,01100000,100xxxxx"
+  }, 
+  {
+   "out_ports": [
+    620005, 
+    620007, 
+    620002, 
+    620003
+   ], 
+   "action": "fwd", 
+   "match": "10101100,00010011,01100000,011xxxxx"
+  }, 
+  {
+   "out_ports": [
+    620005, 
+    620007, 
+    620002, 
+    620003
+   ], 
+   "action": "fwd", 
+   "match": "10101100,00010011,01100000,010xxxxx"
+  }, 
+  {
+   "out_ports": [
+    620005, 
+    620007, 
+    620002, 
+    620003
+   ], 
+   "action": "fwd", 
+   "match": "10101100,00010011,01100000,001xxxxx"
+  }, 
+  {
+   "out_ports": [
+    620005, 
+    620007, 
+    620002, 
+    620003
+   ], 
+   "action": "fwd", 
+   "match": "10101100,00010011,01100000,000xxxxx"
+  }, 
+  {
+   "out_ports": [], 
+   "action": "fwd", 
+   "match": "10101011,01000010,00000100,001xxxxx"
+  }, 
+  {
+   "out_ports": [
+    620001
+   ], 
+   "action": "fwd", 
+   "match": "10000000,00001100,00000010,000xxxxx"
+  }, 
+  {
+   "out_ports": [
+    620006
+   ], 
+   "action": "fwd", 
+   "match": "10000000,00001100,00000001,001xxxxx"
+  }, 
+  {
+   "out_ports": [
+    620001
+   ], 
+   "action": "fwd", 
+   "match": "10000000,00001100,00000001,0110xxxx"
+  }, 
+  {
+   "out_ports": [
+    620001
+   ], 
+   "action": "fwd", 
+   "match": "10000000,00001100,00000001,0100xxxx"
+  }, 
+  {
+   "out_ports": [
+    620002
+   ], 
+   "action": "fwd", 
+   "match": "10000000,00001100,00000001,0001xxxx"
+  }, 
+  {
+   "out_ports": [
+    620005, 
+    620007, 
+    620002
+   ], 
+   "action": "fwd", 
+   "match": "10101100,00011010,00000100,00111xxx"
+  }, 
+  {
+   "out_ports": [
+    620001
+   ], 
+   "action": "fwd", 
+   "match": "10000000,00001100,00000001,11111xxx"
+  }, 
+  {
+   "out_ports": [
+    620005
+   ], 
+   "action": "fwd", 
+   "match": "11000000,10101000,11010001,000011xx"
+  }, 
+  {
+   "out_ports": [
+    620001
+   ], 
+   "action": "fwd", 
+   "match": "10000000,00001100,00000000,0001000x"
+  }, 
+  {
+   "out_ports": [
+    620007
+   ], 
+   "action": "fwd", 
+   "match": "10101100,00010100,00000000,00100011"
+  }, 
+  {
+   "out_ports": [], 
+   "action": "fwd", 
+   "match": "10101100,00010100,00000000,00100010"
+  }, 
+  {
+   "out_ports": [], 
+   "action": "fwd", 
+   "match": "10101100,00010100,00000000,00000011"
+  }, 
+  {
+   "out_ports": [], 
+   "action": "fwd", 
+   "match": "10000000,00001100,11111111,11111111"
+  }, 
+  {
+   "out_ports": [
+    620007
+   ], 
+   "action": "fwd", 
+   "match": "10000000,00001100,00000000,00000010"
+  }
+ ], 
+ "ports": [
+  600001, 
+  600002, 
+  600003, 
+  600004, 
+  600005, 
+  600006, 
+  600007, 
+  600008
+ ], 
+ "id": 6
+}

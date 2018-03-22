@@ -147,7 +147,7 @@ void Network::add_then_load_router(uint32_t router_id, Json::Value *root) {
                     dealt_bdd[router_count] |= match_bdd;
                 }
             } else {
-                printf("Rule type %s encountered, ignore for now.\n", action.c_str());
+                // printf("Rule type %s encountered, ignore for now.\n", action.c_str());
             }
         }
         this->r_num++;
