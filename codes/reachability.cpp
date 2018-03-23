@@ -38,13 +38,13 @@ void Reachability::show_path_to_packets()
        
     while(iter != path_to_packets.end())
     {
-        printf("This path includes router: ");
+        printf("This path includes router: [");
         std::list<int> tmp = (*iter->first);
         std::list<int>::iterator it;
         for (it = tmp.begin(); it != tmp.end(); ++it)
-            printf("%d ", *it);
+            printf("%d -> ", *it);
 
-        printf("with rules: ");
+        printf("] with header: ");
         std::set<uint64_t> tmp2 = (*iter->second);
         std::set<uint64_t>::iterator it2;
         for(it2 = tmp2.begin(); it2 != tmp2.end(); ++it2)

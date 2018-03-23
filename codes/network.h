@@ -20,8 +20,8 @@
 
 using namespace std;
 
-const int router_max = 1000;//total
-const uint64_t rule_type = 4;   //假设有10种流量
+const int router_max = 16;
+const uint64_t rule_type = 100;   //假设有10种流量
 
 class Network
 {
@@ -30,7 +30,6 @@ public:
     Network(int num);
     ~Network();
 
-    void init();
     void set_hdr_len(int len) {hdr_len = len;}
     void add_link(uint64_t from_port, uint64_t to_port);
     void print_topology();
@@ -44,12 +43,18 @@ public:
     void convert_router_to_ap();
 
     void refresh_matrix();
+    void print_matrix(int k);
 
     // all pair reachability:
-    void brutal_force(bool need_print = false);
-    void dfs_search(int router, int destiny, std::set<uint64_t>* rules, bool print_loop, bool need_print = false);
-    void dfs_loop_search(int router, int destiny, std::set<uint64_t>* rules);
-    void display_result(std::set<uint64_t>* rules, bool need_print = false);
+    void brutal_force_with_path(bool need_print = false, bool need_loop = true);
+    void dfs_search_with_path(int router, int destiny, std::set<uint64_t>* rules, bool print_loop, bool need_print = false);
+
+    void brutal_force();
+    void dfs_search(int router, int destiny, std::set<uint64_t>* rules);
+
+    void display_result(std::set<uint64_t>* rules);
+
+    void init_adj_matrix();
 
     void warshall_with_path(bool need_print = false);
 
@@ -58,6 +63,7 @@ public:
     void rule_based(bool need_print = false);
 
     void warshall_no_path(bool need_print = false);
+    void warshall();
 
     void segment_no_path(bool need_print = false);
 private:
@@ -69,14 +75,14 @@ private:
 
     // list to place atomic predicates represented in bdd;
     vector< bdd >* ap_bdd_list;
+    uint64_t ap_num;
 
     // for dfs search
     bool have_been[router_max];
-
-    int router_stack[router_max];
+    int start;
+    int router_stack[2 * router_max]; // in case of loop
     int stack_place;
 
-    // TODO:: use Router* ?
     Router routers[router_max];
 
     // for pre-processing rules
@@ -93,6 +99,11 @@ private:
     static Reachability rmatrix1[router_max][router_max];
     static Reachability rmatrix2[router_max][router_max];
     static Reachability rmatrix3[router_max][router_max];
+
+    set< uint64_t > matrix1[router_max][router_max];
+    set< uint64_t > matrix2[router_max][router_max];
+    set< uint64_t > matrix3[router_max][router_max];
+    set< uint64_t > b_matrix[router_max][router_max];
 }; 
 
 #endif //WARSHALL_NO_PATH_NETWORK_H
