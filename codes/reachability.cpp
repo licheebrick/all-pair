@@ -24,6 +24,11 @@ void Reachability::set_path_to_packets(std::list<int>* set_list, std::set<uint64
     // new_rules = new std::set<uint64_t>;
     // (*new_rules) = (*set_rules);
     // path_to_packets[new_list] = new_rules;
+    // std::list<int>::iterator it4;
+    // for(it4 = (*set_list).begin(); it4 != (*set_list).end(); it4++)
+    // {
+    //     cout << *it4 << endl;
+    // }
     path_to_packets[set_list] = set_rules;
 }
 
@@ -74,8 +79,9 @@ bool Reachability::is_empty()
 
 void Reachability::delete_all()
 {
-    while (!path_to_packets.empty())
-        path_to_packets.erase(path_to_packets.begin());
+    // while (!path_to_packets.empty())
+    //     path_to_packets.erase(path_to_packets.begin());
+    path_to_packets.clear();
 }
 
 Reachability Reachability::operator*(Reachability &reach)

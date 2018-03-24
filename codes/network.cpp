@@ -467,24 +467,22 @@ void Network::warshall_with_path(bool need_print)
     for(int i = 0; i < r_num; i++)
     {
         std::map< uint64_t, std::set<uint64_t>* >::iterator it;
-        it = routers[i].port_to_match.begin();
-        while(it != routers[i].port_to_match.end())
+        for(it = routers[i].port_to_match.begin(); it != routers[i].port_to_match.end(); it++)
         {
-            uint64_t port_num = it->first;
-            uint64_t next_port_num = topology[port_num];
-            int router1 = port_to_router[port_num];
-            int router2 = port_to_router[next_port_num];
-            int router_array[] = {router1, router2};
+            if (topology.count(it->first) == 0)
+                continue;
+            int router1 = i;
+            int router2 = port_to_router[topology[it->first]];
             std::list<int>* tmp;
             tmp = new std::list<int>;
-            (*tmp).assign(router_array, router_array + 2);
-            rmatrix[router1][router2].set_path_to_packets(&(*tmp), it->second);
+            (*tmp).push_back(router1);
+            (*tmp).push_back(router2);
+            rmatrix[router1][router2].set_path_to_packets(tmp, it->second);
             is_height[router1] = true;
-            is_width[router2] = true;
-            it ++;    
+            is_width[router2] = true;   
         }
     }
-    
+
     //进行一个矩阵变换
     int minimatrix[router_max][router_max][2];
     int height = 0;
@@ -512,56 +510,52 @@ void Network::warshall_with_path(bool need_print)
     for(int i = 0; i < r_num; i++)
         for(int j = 0; j < r_num; j++)
             rmatrix1[i][j] = rmatrix[i][j];
+    int rheight, rwidth;
     for(int k = 0; k < r_num; k++)
     {   
         if(k % 2 == 1)
         {
-            for(int i = 0; i < height; i++)
+            for(int i = 0; i < r_num; i++)
             {
-                for(int j = 0; j < width; j++)
+                for(int j = 0; j < r_num; j++)
                 {
-                    rmatrix1[minimatrix[i][j][0]][minimatrix[i][j][1]] = rmatrix2[minimatrix[i][j][0]][k] * rmatrix2[k][minimatrix[i][j][1]];
-                    rmatrix1[minimatrix[i][j][0]][minimatrix[i][j][1]] = rmatrix1[minimatrix[i][j][0]][minimatrix[i][j][1]] + rmatrix2[minimatrix[i][j][0]][minimatrix[i][j][1]]; 
-                    if(minimatrix[i][j][0] == minimatrix[i][j][1])
+                    // rheight = minimatrix[i][j][0];
+                    // rwidth = minimatrix[i][j][1];
+                    rheight = i;
+                    rwidth = j;
+                    // if(rheight == k || rwidth == k)
+                    //     continue;
+                    if(rheight == k || rwidth == k)
                     {
-                        if(!rmatrix1[minimatrix[i][j][0]][minimatrix[i][j][1]].is_empty())
-                        {
-                            if(need_print)
-                            {
-                                printf("Loop detected:\n");
-                                rmatrix1[minimatrix[i][j][0]][minimatrix[i][j][1]].show_path_to_packets();
-                            }
-                            rmatrix1[minimatrix[i][j][0]][minimatrix[i][j][1]].delete_all();
-                        }
-                    }
+                        rmatrix1[rheight][rwidth] = rmatrix2[rheight][rwidth];
+                        continue;
+                    }   
+                    rmatrix1[rheight][rwidth] = rmatrix2[rheight][k] * rmatrix2[k][rwidth];
+                    rmatrix1[rheight][rwidth] = rmatrix1[rheight][rwidth] + rmatrix2[rheight][rwidth]; 
                 }
             }
         }
         else if(k % 2 == 0)
         {
-            for(int i = 0; i < height; i++)
+            for(int i = 0; i < r_num; i++)
             {
-                for(int j = 0; j < width; j++)
+                for(int j = 0; j < r_num; j++)
                 {
-                    rmatrix2[minimatrix[i][j][0]][minimatrix[i][j][1]] = rmatrix1[minimatrix[i][j][0]][k] * rmatrix1[k][minimatrix[i][j][1]];
-                    rmatrix2[minimatrix[i][j][0]][minimatrix[i][j][1]] = rmatrix2[minimatrix[i][j][0]][minimatrix[i][j][1]] + rmatrix1[minimatrix[i][j][0]][minimatrix[i][j][1]];
-                    if(minimatrix[i][j][0] == minimatrix[i][j][1])
+                    // rheight = minimatrix[i][j][0];
+                    // rwidth = minimatrix[i][j][1];
+                    rheight = i;
+                    rwidth = j;
+                    if(rheight == k || rwidth == k)
                     {
-                        if(!rmatrix2[minimatrix[i][j][0]][minimatrix[i][j][1]].is_empty())
-                        {
-                            if(need_print)
-                            {
-                                printf("Loop detected:\n");
-                                rmatrix2[minimatrix[i][j][0]][minimatrix[i][j][1]].show_path_to_packets();
-                            }
-                            rmatrix2[minimatrix[i][j][0]][minimatrix[i][j][1]].delete_all();
-                        }
-                    }
+                        rmatrix2[rheight][rwidth] = rmatrix1[rheight][rwidth];
+                        continue;
+                    }   
+                    rmatrix2[rheight][rwidth] = rmatrix1[rheight][k] * rmatrix1[k][rwidth];
+                    rmatrix2[rheight][rwidth] = rmatrix2[rheight][rwidth] + rmatrix1[rheight][rwidth];
                 }
             }
         }
     }
-
     if(need_print)
     {
         if(r_num % 2 == 0)
@@ -654,25 +648,23 @@ void Network::segment_based(bool need_print)
     //先算一个基本的r0，然后推导到rk
     bool is_height[router_max] = {false};
     bool is_width[router_max] = {false};
-    
+
     for(int i = 0; i < r_num; i++)
     {
         std::map< uint64_t, std::set<uint64_t>* >::iterator it;
-        it = routers[i].port_to_match.begin();
-        while(it != routers[i].port_to_match.end())
+        for(it = routers[i].port_to_match.begin(); it != routers[i].port_to_match.end(); it++)
         {
-            uint64_t port_num = it->first;
-            uint64_t next_port_num = topology[port_num];
-            int router1 = port_to_router[port_num];
-            int router2 = port_to_router[next_port_num];
-            int router_array[] = {router1, router2};
+            if (topology.count(it->first) == 0)
+                continue;         
+            int router1 = i;
+            int router2 = port_to_router[topology[it->first]];
             std::list<int>* tmp;
             tmp = new std::list<int>;
-            (*tmp).assign(router_array, router_array + 2);
+            (*tmp).push_back(router1);
+            (*tmp).push_back(router2);
             rmatrix[router1][router2].set_path_to_packets(&(*tmp), it->second);
             is_height[router1] = true;
-            is_width[router2] = true;
-            it ++;    
+            is_width[router2] = true;   
         }
     }
 
@@ -682,7 +674,7 @@ void Network::segment_based(bool need_print)
             rmatrix2[i][j] = rmatrix[i][j];
             rmatrix3[i][j] = rmatrix[i][j];
         }
-            
+
     Reachability tmp;
     //rmatrix3用来存总的，rmatrix1和rmatrix2是分的
     for(int k = 3; k <= r_num; k++)
@@ -691,23 +683,23 @@ void Network::segment_based(bool need_print)
         {
             for(int i = 0; i < r_num; i++)
             {
-                if(!is_height[i])
-                    continue;
+                // if(!is_height[i])
+                //     continue;
                 for(int j = 0; j < r_num; j++)
                 {
-                    if(!is_width[j])
-                        continue;
-                    if(i != 0)
-                        rmatrix1[i][j] = rmatrix2[i][0] * rmatrix[0][j];
-                    else
-                        rmatrix1[i][j].delete_all();
-                    for(int place = 1; place < r_num; place++)
+                    //TODO: 优化这个
+                    //1：这个矩阵可以缩小，三个for都可以变小
+                    // if(!is_width[j])
+                    //     continue;
+                    // if(i != 0)
+                    //     rmatrix1[i][j] = rmatrix2[i][0] * rmatrix[0][j];
+                    // else
+                    //     rmatrix1[i][j].delete_all();
+                    rmatrix1[i][j].delete_all();
+                    for(int place = 0; place < r_num; place++)
                     {
-                        if(i == place)
-                            continue;
-                        if(rmatrix2[i][place].is_empty())
-                            continue;
-                        tmp = rmatrix2[i][place] * rmatrix[place][j];
+                        tmp.delete_all();
+                        tmp = rmatrix[i][place] * rmatrix2[place][j];
                         rmatrix1[i][j] = rmatrix1[i][j] + tmp;
                     }
                     rmatrix3[i][j] = rmatrix3[i][j] + rmatrix1[i][j];
@@ -718,23 +710,17 @@ void Network::segment_based(bool need_print)
         {
             for(int i = 0; i < r_num; i++)
             {
-                if(!is_height[i])
-                    continue;
+                // if(!is_height[i])
+                //     continue;
                 for(int j = 0; j < r_num; j++)
                 {
-                    if(!is_width[j])
-                        continue;
-                    if(i != 0)
-                        rmatrix2[i][j] = rmatrix1[i][0] * rmatrix[0][j];
-                    else
-                        rmatrix2[i][j].delete_all();
-                    for(int place = 1; place < r_num; place++)
+                    // if(!is_width[j])
+                    //     continue;
+                    rmatrix2[i][j].delete_all();
+                    for(int place = 0; place < r_num; place++)
                     {
-                        if(i == place)
-                            continue;
-                        if(rmatrix1[i][place].is_empty())
-                            continue;
-                        tmp = rmatrix1[i][place] * rmatrix[place][j];
+                        tmp.delete_all();
+                        tmp = rmatrix[i][place] * rmatrix1[place][j];
                         rmatrix2[i][j] = rmatrix2[i][j] + tmp;
                     }
                     rmatrix3[i][j] = rmatrix3[i][j] + rmatrix2[i][j];
@@ -742,7 +728,6 @@ void Network::segment_based(bool need_print)
             }
         }
     }
-
     if(need_print)
     {
         for(int i = 0; i < r_num; i++)

@@ -63,8 +63,8 @@ int main(int argc, char* argv[])
 {
     // running configs
     bool do_run_test = true;
-    int algr = 7;       // algorithm used for reachability calculation
-    int dataset = 3;
+    int algr = 3;       // algorithm used for reachability calculation
+    int dataset = 2;
     /*
         rule_num: REVISE WHEN CHANGE DATASET!!!
         simple_with_loop: 4; simple_no_loop: 5;
@@ -131,7 +131,9 @@ int main(int argc, char* argv[])
             network_example.brutal_force();
             inter_time2 = clock();
             printf("Brute force Total Time :           %f s \n", (double)(inter_time2 - inter_time1) / CLOCKS_PER_SEC);
+            network_example.refresh_matrix();
 
+            inter_time2 = clock();
             network_example.warshall_with_path();
             inter_time3 = clock();
             printf("Warshall with path Total Time :    %f s \n", (double)(inter_time3 - inter_time2) / CLOCKS_PER_SEC);
