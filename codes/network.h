@@ -43,18 +43,17 @@ public:
     void convert_router_to_ap();
 
     void refresh_matrix();
+    void init_adj_matrix();
     void print_matrix(int k);
 
     // all pair reachability:
     void brutal_force_with_path(bool need_print = false, bool need_loop = true);
     void dfs_search_with_path(int router, int destiny, std::set<uint64_t>* rules, bool print_loop, bool need_print = false);
 
-    void brutal_force();
-    void dfs_search(int router, int destiny, std::set<uint64_t>* rules);
+    void brutal_force(bool need_print = false);
+    void dfs_search(int router, int destiny, std::set<uint64_t>* rules, bool need_print = false);
 
     void display_result(std::set<uint64_t>* rules);
-
-    void init_adj_matrix();
 
     void warshall_with_path(bool need_print = false);
 
@@ -63,7 +62,6 @@ public:
     void rule_based(bool need_print = false);
 
     void warshall_no_path(bool need_print = false);
-    void warshall();
 
     void segment_no_path(bool need_print = false);
 private:

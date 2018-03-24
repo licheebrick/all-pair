@@ -251,7 +251,8 @@ void Network::brutal_force_with_path(bool need_print, bool need_loop)
             memset(have_been, false, router_max);  // clear state
         }
     }
-    print_matrix(3);
+    if(need_print)
+        print_matrix(3);
 }
 
 void Network::dfs_search_with_path(int router, int destiny, std::set<uint64_t>* rules, bool need_loop, bool need_print)
@@ -300,7 +301,7 @@ void Network::dfs_search_with_path(int router, int destiny, std::set<uint64_t>* 
     }
 }
 
-void Network::brutal_force() {
+void Network::brutal_force(bool need_print) {
     // init
     memset(have_been, false, router_max);
     std::set<uint64_t> full_rules;
@@ -312,14 +313,15 @@ void Network::brutal_force() {
         for(int j = 0; j < r_num; j++) {
             have_been[i] = true;
             start = i;
-            dfs_search(i, j, &full_rules);
+            dfs_search(i, j, &full_rules, need_print);
             memset(have_been, false, router_max);  // clear state
         }
     }
-    print_matrix(3);
+    if(need_print)
+        print_matrix(3);
 }
 
-void Network::dfs_search(int router, int destiny, std::set<uint64_t>* rules) {
+void Network::dfs_search(int router, int destiny, std::set<uint64_t>* rules, bool need_print) {
     set< uint64_t >* new_match;
     for (auto it = routers[router].port_to_match.begin(); it != routers[router].port_to_match.end(); it++) {
         new_match = new set<uint64_t >;
@@ -346,7 +348,7 @@ void Network::dfs_search(int router, int destiny, std::set<uint64_t>* rules) {
                 continue;
             } // 否则继续
             have_been[port_to_router[next_port_num]] = true;
-            dfs_search(port_to_router[next_port_num], destiny, new_match);
+            dfs_search(port_to_router[next_port_num], destiny, new_match, need_print);
             have_been[port_to_router[next_port_num]] = false;
         }
         delete new_match;
@@ -396,7 +398,7 @@ void Network::init_adj_matrix() {
             this->matrix1[i][router2].insert(it->second->begin(), it->second->end());
         }
     }
-    print_matrix(1);
+    //print_matrix(1);
 }
 
 void Network::warshall_no_path(bool need_print)
@@ -438,8 +440,11 @@ void Network::warshall_no_path(bool need_print)
         }
         // k为偶数的时候算的是matrix2
         // print_matrix(k);
-        printf("%d\n", k);
-        print_matrix((k + 1) % 2 + 1);
+        if(need_print)
+        {
+            printf("%d\n", k);
+            print_matrix((k + 1) % 2 + 1);
+        }
     }
     if (r_num % 2 == 1) {
         for (int i = 0; i < r_num; i++) {
@@ -616,7 +621,8 @@ void Network::segment_no_path(bool need_print)
                     matrix3[i][j].insert(matrix2[i][j].begin(), matrix2[i][j].end());
                 }
             }
-            print_matrix(2);
+            if(need_print)
+                print_matrix(2);
         } else {
             // k为奇数时算matrix1
             for (int i = 0; i < r_num; i++) {
@@ -634,7 +640,8 @@ void Network::segment_no_path(bool need_print)
                     matrix3[i][j].insert(matrix1[i][j].begin(), matrix1[i][j].end());
                 }
             }
-            print_matrix(1);
+            if(need_print)
+                print_matrix(1);
         }
     }
     if (need_print) {
