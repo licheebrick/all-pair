@@ -199,6 +199,21 @@ void Network::convert_router_to_ap() {
 
 void Network::refresh_matrix()
 {
+    std::set<uint64_t> newone;
+    for(int i = 0; i < r_num; i++)
+    {
+        for(int j = 0; j < r_num; j++)
+        {
+            b_matrix[i][j] = newone;
+            matrix1[i][j] = newone;
+            matrix2[i][j] = newone;
+            matrix3[i][j] = newone;
+        }
+    }
+}
+
+void Network::refresh_rmatrix()
+{
     Reachability newone;
     for(int i = 0; i < r_num; i++)
     {
@@ -390,13 +405,38 @@ void Network::print_matrix(int k) {
 }
 
 void Network::init_adj_matrix() {
+    bool is_height[router_max] = {false};
+    bool is_width[router_max] = {false};
     for (int i = 0; i < r_num; i++) {
         for (auto it = routers[i].port_to_match.begin(); it != routers[i].port_to_match.end(); it++) {
             if (topology.count(it->first) == 0)
                 continue;
             int router2 = port_to_router[topology[it->first]];
             this->matrix1[i][router2].insert(it->second->begin(), it->second->end());
+            is_height[i] = true;
+            is_width[router2] = true;   
         }
+    }
+    mini_height = 0;
+    mini_width = 0;
+    for(int i = 0; i < r_num; i++)
+    {
+        if(!is_height[i])
+            continue;
+
+        mini_width = 0;
+        for(int j = 0; j < r_num; j++)
+        {
+            if(!is_width[j])
+                continue;
+            else
+            {
+                mini_matrix[mini_height][mini_width][0] = i;
+                mini_matrix[mini_height][mini_width][1] = j;
+                mini_width++;
+            }   
+        }
+        mini_height++;
     }
     //print_matrix(1);
 }
@@ -404,37 +444,34 @@ void Network::init_adj_matrix() {
 void Network::warshall_no_path(bool need_print)
 {
     init_adj_matrix();
-
+    
     set< uint64_t > adder, muler;
+    int rheight, rwidth;
     int k = 0;
     for (k = 0; k < r_num; k++) {
         if (k % 2 == 0) {
-            for (int i = 0; i < r_num; i++) {
-                for (int j = 0; j < r_num; j++) {
-                    adder.clear();
-                    muler.clear();
-                    set_intersection(matrix1[i][k].begin(), matrix1[i][k].end(),
-                                     matrix1[k][j].begin(), matrix1[k][j].end(),
-                                     inserter(muler, muler.begin()));
-                    set_union(matrix1[i][j].begin(), matrix1[i][j].end(),
-                              muler.begin(), muler.end(),
-                              inserter(adder, adder.begin()));
-                    matrix2[i][j] = adder;
+            for (int i = 0; i < mini_height; i++) {
+                for (int j = 0; j < mini_width; j++) {
+                    rheight = mini_matrix[i][j][0];
+                    rwidth = mini_matrix[i][j][1];
+                    matrix2[rheight][rwidth].clear();
+                    set_intersection(matrix1[rheight][k].begin(), matrix1[rheight][k].end(),
+                                     matrix1[k][rwidth].begin(), matrix1[k][rwidth].end(),
+                                     inserter(matrix2[rheight][rwidth], matrix2[rheight][rwidth].begin()));
+                    matrix2[rheight][rwidth].insert(matrix1[rheight][rwidth].begin(), matrix1[rheight][rwidth].end());
                 }
             }
         }
         else {
-            for (int i = 0; i < r_num; i++) {
-                for (int j = 0; j < r_num; j++) {
-                    adder.clear();
-                    muler.clear();
-                    set_intersection(matrix2[i][k].begin(), matrix2[i][k].end(),
-                                     matrix2[k][j].begin(), matrix2[k][j].end(),
-                                     inserter(muler, muler.begin()));
-                    set_union(matrix2[i][j].begin(), matrix2[i][j].end(),
-                              muler.begin(), muler.end(),
-                              inserter(adder, adder.begin()));
-                    matrix1[i][j] = adder;
+            for (int i = 0; i < mini_height; i++) {
+                for (int j = 0; j < mini_width; j++) {
+                    rheight = mini_matrix[i][j][0];
+                    rwidth = mini_matrix[i][j][1];
+                    matrix1[rheight][j].clear();
+                    set_intersection(matrix2[rheight][k].begin(), matrix2[rheight][k].end(),
+                                     matrix2[k][rwidth].begin(), matrix2[k][rwidth].end(),
+                                     inserter(matrix1[rheight][rwidth], matrix1[rheight][rwidth].begin()));
+                    matrix1[rheight][rwidth].insert(matrix2[rheight][rwidth].begin(), matrix2[rheight][rwidth].end());
                 }
             }
         }
@@ -515,16 +552,14 @@ void Network::warshall_with_path(bool need_print)
     {   
         if(k % 2 == 1)
         {
-            for(int i = 0; i < r_num; i++)
+            for(int i = 0; i < height; i++)
             {
-                for(int j = 0; j < r_num; j++)
+                for(int j = 0; j < width; j++)
                 {
-                    // rheight = minimatrix[i][j][0];
-                    // rwidth = minimatrix[i][j][1];
-                    rheight = i;
-                    rwidth = j;
-                    // if(rheight == k || rwidth == k)
-                    //     continue;
+                    rheight = minimatrix[i][j][0];
+                    rwidth = minimatrix[i][j][1];
+                    // rheight = i;
+                    // rwidth = j;
                     if(rheight == k || rwidth == k)
                     {
                         rmatrix1[rheight][rwidth] = rmatrix2[rheight][rwidth];
@@ -537,14 +572,14 @@ void Network::warshall_with_path(bool need_print)
         }
         else if(k % 2 == 0)
         {
-            for(int i = 0; i < r_num; i++)
+            for(int i = 0; i < height; i++)
             {
-                for(int j = 0; j < r_num; j++)
+                for(int j = 0; j < width; j++)
                 {
-                    // rheight = minimatrix[i][j][0];
-                    // rwidth = minimatrix[i][j][1];
-                    rheight = i;
-                    rwidth = j;
+                    rheight = minimatrix[i][j][0];
+                    rwidth = minimatrix[i][j][1];
+                    // rheight = i;
+                    // rwidth = j;
                     if(rheight == k || rwidth == k)
                     {
                         rmatrix2[rheight][rwidth] = rmatrix1[rheight][rwidth];
@@ -597,41 +632,42 @@ void Network::segment_no_path(bool need_print)
     }
     // matrix1是原始的临接矩阵
 
+    int rheight, rwidth;
     for (int k = 0; k < r_num; k++) {
         if (k % 2 == 0) {
             // k为偶数时算matrix2
-            for (int i = 0; i < r_num; i++) {
-                for (int j = 0; j < r_num; j++) {
-                    adder.clear();
+            for (int i = 0; i < mini_height; i++) {
+                for (int j = 0; j < mini_width; j++) {
+                    // rheight = i;
+                    // rwidth = j;
+                    rheight = mini_matrix[i][j][0];
+                    rwidth = mini_matrix[i][j][1];
+                    matrix2[rheight][rwidth].clear();
                     for (int m = 0; m < r_num; m++) {
-                        muler.clear();
-                        set_intersection(matrix[i][m].begin(), matrix[i][m].end(),
-                                         matrix1[m][j].begin(), matrix1[m][j].end(),
-                                         inserter(muler, muler.begin()));
-                        adder.insert(muler.begin(), muler.end());
+                        set_intersection(matrix[rheight][m].begin(), matrix[rheight][m].end(),
+                                         matrix1[m][rwidth].begin(), matrix1[m][rwidth].end(),
+                                         inserter(matrix2[rheight][rwidth], matrix2[rheight][rwidth].begin()));
                     }
-                    matrix2[i][j].clear();
-                    matrix2[i][j].insert(adder.begin(), adder.end());
-                    matrix3[i][j].insert(matrix2[i][j].begin(), matrix2[i][j].end());
+                    matrix3[rheight][rwidth].insert(matrix2[rheight][rwidth].begin(), matrix2[rheight][rwidth].end());
                 }
             }
             if(need_print)
                 print_matrix(2);
         } else {
             // k为奇数时算matrix1
-            for (int i = 0; i < r_num; i++) {
-                for (int j = 0; j < r_num; j++) {
-                    adder.clear();
-                    for (int m = 0; m < r_num; m++) {
-                        muler.clear();
-                        set_intersection(matrix[i][m].begin(), matrix[i][m].end(),
-                                         matrix2[m][j].begin(), matrix2[m][j].end(),
-                                         inserter(muler, muler.begin()));
-                        adder.insert(muler.begin(), muler.end());
-                    }
+            for (int i = 0; i < mini_height; i++) {
+                for (int j = 0; j < mini_width; j++) {
+                    // rheight = i;
+                    // rwidth = j;
+                    rheight = mini_matrix[i][j][0];
+                    rwidth = mini_matrix[i][j][1];
                     matrix1[i][j].clear();
-                    matrix1[i][j].insert(adder.begin(), adder.end());
-                    matrix3[i][j].insert(matrix1[i][j].begin(), matrix1[i][j].end());
+                    for (int m = 0; m < r_num; m++) {
+                        set_intersection(matrix[rheight][m].begin(), matrix[rheight][m].end(),
+                                         matrix2[m][rwidth].begin(), matrix2[m][rwidth].end(),
+                                         inserter(matrix1[rheight][j], matrix1[rheight][j].begin()));
+                    }
+                    matrix3[rheight][j].insert(matrix1[rheight][rwidth].begin(), matrix1[rheight][rwidth].end());
                 }
             }
             if(need_print)
@@ -668,6 +704,30 @@ void Network::segment_based(bool need_print)
         }
     }
 
+    //进行一个矩阵变换
+    int minimatrix[router_max][router_max][2];
+    int height = 0;
+    int width = 0;
+    for(int i = 0; i < r_num; i++)
+    {
+        if(!is_height[i])
+            continue;
+
+        width = 0;
+        for(int j = 0; j < r_num; j++)
+        {
+            if(!is_width[j])
+                continue;
+            else
+            {
+                minimatrix[height][width][0] = i;
+                minimatrix[height][width][1] = j;
+                width++;
+            }   
+        }
+        height++;
+    }
+
     for(int i = 0; i < r_num; i++)
         for(int j = 0; j < r_num; j++)
         {
@@ -676,54 +736,57 @@ void Network::segment_based(bool need_print)
         }
 
     Reachability tmp;
+    int rheight, rwidth, rplace;
     //rmatrix3用来存总的，rmatrix1和rmatrix2是分的
     for(int k = 3; k <= r_num; k++)
     {   
         if(k % 2 == 1)
         {
-            for(int i = 0; i < r_num; i++)
+            for(int i = 0; i < height; i++)
             {
-                // if(!is_height[i])
-                //     continue;
-                for(int j = 0; j < r_num; j++)
+                for(int j = 0; j < width; j++)
                 {
-                    //TODO: 优化这个
-                    //1：这个矩阵可以缩小，三个for都可以变小
-                    // if(!is_width[j])
-                    //     continue;
-                    // if(i != 0)
-                    //     rmatrix1[i][j] = rmatrix2[i][0] * rmatrix[0][j];
-                    // else
-                    //     rmatrix1[i][j].delete_all();
-                    rmatrix1[i][j].delete_all();
-                    for(int place = 0; place < r_num; place++)
+                    // rheight = i;
+                    // rwidth = j;
+                    rheight = minimatrix[i][j][0];
+                    rwidth = minimatrix[i][j][1];
+                    rmatrix1[rheight][rwidth].delete_all();
+                    for(int place = 0; place < width; place++)
                     {
                         tmp.delete_all();
-                        tmp = rmatrix[i][place] * rmatrix2[place][j];
-                        rmatrix1[i][j] = rmatrix1[i][j] + tmp;
+                        //rplace = place;
+                        rplace = minimatrix[0][place][1];
+                        if(rplace == rwidth)
+                            continue;
+                        tmp = rmatrix[rheight][rplace] * rmatrix2[rplace][rwidth];
+                        rmatrix1[rheight][rwidth] = rmatrix1[rheight][rwidth] + tmp;
                     }
-                    rmatrix3[i][j] = rmatrix3[i][j] + rmatrix1[i][j];
+                    rmatrix3[rheight][rwidth] = rmatrix3[rheight][rwidth] + rmatrix1[rheight][rwidth];
                 }
             }
         }
         else if(k % 2 == 0)
         {
-            for(int i = 0; i < r_num; i++)
+            for(int i = 0; i < height; i++)
             {
-                // if(!is_height[i])
-                //     continue;
-                for(int j = 0; j < r_num; j++)
+                for(int j = 0; j < width; j++)
                 {
-                    // if(!is_width[j])
-                    //     continue;
-                    rmatrix2[i][j].delete_all();
-                    for(int place = 0; place < r_num; place++)
+                    // rheight = i;
+                    // rwidth = j;
+                    rheight = minimatrix[i][j][0];
+                    rwidth = minimatrix[i][j][1];
+                    rmatrix2[rheight][rwidth].delete_all();
+                    for(int place = 0; place < width; place++)
                     {
                         tmp.delete_all();
-                        tmp = rmatrix[i][place] * rmatrix1[place][j];
-                        rmatrix2[i][j] = rmatrix2[i][j] + tmp;
+                        //rplace = place;
+                        rplace = minimatrix[0][place][1];
+                        if(rplace == rwidth)
+                            continue;
+                        tmp = rmatrix[rheight][rplace] * rmatrix1[rplace][rwidth];
+                        rmatrix2[rheight][rwidth] = rmatrix2[rheight][rwidth] + tmp;
                     }
-                    rmatrix3[i][j] = rmatrix3[i][j] + rmatrix2[i][j];
+                    rmatrix3[rheight][rwidth] = rmatrix3[rheight][rwidth] + rmatrix2[rheight][rwidth];
                 }
             }
         }
