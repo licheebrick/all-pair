@@ -20,8 +20,8 @@
 
 using namespace std;
 
-const int router_max = 16;
-const uint64_t rule_type = 133;   //假设有10种流量
+const int router_max = 20;
+const uint64_t rule_type = 241;   //假设有10种流量
 
 class Network
 {
@@ -43,7 +43,6 @@ public:
     void convert_router_to_ap();
 
     void refresh_matrix();
-    void refresh_rmatrix();
     void init_adj_matrix();
     void print_matrix(int k);
 

@@ -210,21 +210,29 @@ void Network::refresh_matrix()
             matrix3[i][j] = newone;
         }
     }
-}
 
-void Network::refresh_rmatrix()
-{
-    Reachability newone;
+    Reachability newone2;
     for(int i = 0; i < r_num; i++)
     {
         for(int j = 0; j < r_num; j++)
         {
-            rmatrix[i][j] = newone;
-            rmatrix1[i][j] = newone;
-            rmatrix2[i][j] = newone;
-            rmatrix3[i][j] = newone;
+            rmatrix[i][j] = newone2;
+            rmatrix1[i][j] = newone2;
+            rmatrix2[i][j] = newone2;
+            rmatrix3[i][j] = newone2;
         }
     }
+
+    for(int i = 0; i < r_num; i++)
+    {
+        for(int j = 0; j < r_num; j++)
+        {
+            mini_matrix[i][j][0] = 0;
+            mini_matrix[i][j][1] = 0;
+        }
+    }
+    mini_height = 0;
+    mini_width = 0;
 }
 
 void Network::display_result(std::set<uint64_t>* rules)
@@ -266,14 +274,16 @@ void Network::brutal_force_with_path(bool need_print, bool need_loop)
             memset(have_been, false, router_max);  // clear state
         }
     }
-    if(need_print)
-        print_matrix(3);
+    // if(need_print)
+    //     print_matrix(3);
 }
 
 void Network::dfs_search_with_path(int router, int destiny, std::set<uint64_t>* rules, bool need_loop, bool need_print)
 {
     set< uint64_t >* new_match;
     for (auto it = routers[router].port_to_match.begin(); it != routers[router].port_to_match.end(); it++) {
+        if (topology.count(it->first) == 0)
+            continue;
         new_match = new set<uint64_t >;
         uint64_t port_num = it->first;
         uint64_t next_port_num = topology[port_num];
@@ -290,7 +300,7 @@ void Network::dfs_search_with_path(int router, int destiny, std::set<uint64_t>* 
         // 如果不是空集...
         if (port_to_router[next_port_num] == destiny) { // 如果到了目的地，应该总是第一次到，否则在前边就会记录
             // 首先将这个match加入
-            b_matrix[router_stack[0]][destiny].insert(new_match->begin(), new_match->end());
+            //b_matrix[router_stack[0]][destiny].insert(new_match->begin(), new_match->end());
             router_stack[stack_place++] = destiny;
             if (need_print) {
                 if (need_loop && (destiny == router_stack[0])) {
@@ -339,6 +349,8 @@ void Network::brutal_force(bool need_print) {
 void Network::dfs_search(int router, int destiny, std::set<uint64_t>* rules, bool need_print) {
     set< uint64_t >* new_match;
     for (auto it = routers[router].port_to_match.begin(); it != routers[router].port_to_match.end(); it++) {
+        if (topology.count(it->first) == 0)
+            continue;
         new_match = new set<uint64_t >;
         uint64_t port_num = it->first;
         uint64_t next_port_num = topology[port_num];
@@ -477,11 +489,11 @@ void Network::warshall_no_path(bool need_print)
         }
         // k为偶数的时候算的是matrix2
         // print_matrix(k);
-        if(need_print)
-        {
-            printf("%d\n", k);
-            print_matrix((k + 1) % 2 + 1);
-        }
+        // if(need_print)
+        // {
+        //     printf("%d\n", k);
+        //     print_matrix((k + 1) % 2 + 1);
+        // }
     }
     if (r_num % 2 == 1) {
         for (int i = 0; i < r_num; i++) {
@@ -510,10 +522,10 @@ void Network::warshall_with_path(bool need_print)
                 continue;
             int router1 = i;
             int router2 = port_to_router[topology[it->first]];
-            std::list<int>* tmp;
-            tmp = new std::list<int>;
-            (*tmp).push_back(router1);
-            (*tmp).push_back(router2);
+            std::list<uint32_t>* tmp;
+            tmp = new std::list<uint32_t>;
+            (*tmp).push_back(routers[router1].getid());
+            (*tmp).push_back(routers[router2].getid());
             rmatrix[router1][router2].set_path_to_packets(tmp, it->second);
             is_height[router1] = true;
             is_width[router2] = true;   
@@ -694,10 +706,10 @@ void Network::segment_based(bool need_print)
                 continue;         
             int router1 = i;
             int router2 = port_to_router[topology[it->first]];
-            std::list<int>* tmp;
-            tmp = new std::list<int>;
-            (*tmp).push_back(router1);
-            (*tmp).push_back(router2);
+            std::list<uint32_t>* tmp;
+            tmp = new std::list<uint32_t>;
+            (*tmp).push_back(routers[router1].getid());
+            (*tmp).push_back(routers[router2].getid());
             rmatrix[router1][router2].set_path_to_packets(&(*tmp), it->second);
             is_height[router1] = true;
             is_width[router2] = true;   
@@ -816,7 +828,7 @@ void Network::rule_based(bool need_print)
             router_place = j;
 
             string list_str;
-            std::list<int> router_list;
+            std::list<uint32_t> router_list;
             bool rhave_been[router_max] = {false};
 
             list_str = list_str + to_string(j);
@@ -846,8 +858,8 @@ void Network::rule_based(bool need_print)
                 if(router_place == j)
                 {
                     //loop!
-                    list_str = list_str + to_string(router_place);
-                    router_list.push_back(router_place);
+                    list_str = list_str + to_string(routers[router_place].getid());
+                    router_list.push_back(routers[router_place].getid());
                     rulebased.set_new_rule(list_str, &router_list, i);
                     break;
                 }
@@ -856,8 +868,8 @@ void Network::rule_based(bool need_print)
                     //not loop~
                     break;
                 }
-                list_str = list_str + to_string(router_place);
-                router_list.push_back(router_place);
+                list_str = list_str + to_string(routers[router_place].getid());
+                router_list.push_back(routers[router_place].getid());
                 rhave_been[router_place] = true;
                 rulebased.set_new_rule(list_str, &router_list, i);
             }

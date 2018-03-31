@@ -20,11 +20,11 @@ public:
     Rulebased();
     ~Rulebased();
 
-    void set_new_rule(string list_str, std::list<int>* tmp_list, uint64_t rule);
+    void set_new_rule(string list_str, std::list<uint32_t>* tmp_list, uint64_t rule);
     void print_rule_map();
 
     std::hash< std::string > list_string;
-    std::map<uint32_t, std::map<std::list<int>*, std::set<uint64_t>* >* > rule_map;
+    std::map<uint32_t, std::map<std::list<uint32_t>*, std::set<uint64_t>* >* > rule_map;
 };
 
 #endif //WARSHALL_NO_PATH_RULEBASED_H
