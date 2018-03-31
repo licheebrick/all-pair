@@ -104,6 +104,8 @@ private:
     set< uint64_t > b_matrix[router_max][router_max];
     int mini_matrix[router_max][router_max][2];
     int mini_height, mini_width;
+
+    Rulebased rulebased;
 }; 
 
 #endif //WARSHALL_NO_PATH_NETWORK_H

@@ -200,9 +200,9 @@ void Network::convert_router_to_ap() {
 void Network::refresh_matrix()
 {
     std::set<uint64_t> newone;
-    for(int i = 0; i < r_num; i++)
+    for(int i = 0; i < router_max; i++)
     {
-        for(int j = 0; j < r_num; j++)
+        for(int j = 0; j < router_max; j++)
         {
             b_matrix[i][j] = newone;
             matrix1[i][j] = newone;
@@ -212,9 +212,9 @@ void Network::refresh_matrix()
     }
 
     Reachability newone2;
-    for(int i = 0; i < r_num; i++)
+    for(int i = 0; i < router_max; i++)
     {
-        for(int j = 0; j < r_num; j++)
+        for(int j = 0; j < router_max; j++)
         {
             rmatrix[i][j] = newone2;
             rmatrix1[i][j] = newone2;
@@ -223,9 +223,9 @@ void Network::refresh_matrix()
         }
     }
 
-    for(int i = 0; i < r_num; i++)
+    for(int i = 0; i < router_max; i++)
     {
-        for(int j = 0; j < r_num; j++)
+        for(int j = 0; j < router_max; j++)
         {
             mini_matrix[i][j][0] = 0;
             mini_matrix[i][j][1] = 0;
@@ -233,6 +233,8 @@ void Network::refresh_matrix()
     }
     mini_height = 0;
     mini_width = 0;
+
+    rulebased.clean_up();
 }
 
 void Network::display_result(std::set<uint64_t>* rules)
@@ -818,8 +820,7 @@ void Network::segment_based(bool need_print)
 
 void Network::rule_based(bool need_print)
 {
-    Rulebased rulebased;
-    for(uint64_t i = 1; i <= rule_type; i++)
+    for(uint64_t i = 0; i < rule_type; i++)
     {
         uint64_t portnum = 0;
         int router_place = 0;
@@ -827,12 +828,12 @@ void Network::rule_based(bool need_print)
         {       
             router_place = j;
 
-            string list_str;
+            string list_str = "";
             std::list<uint32_t> router_list;
             bool rhave_been[router_max] = {false};
 
-            list_str = list_str + to_string(j);
-            router_list.push_back(j);
+            list_str = list_str + to_string(routers[j].getid());
+            router_list.push_back(routers[j].getid());
             rhave_been[j] = true;
 
             while(1)
@@ -842,10 +843,13 @@ void Network::rule_based(bool need_print)
                 it = routers[router_place].port_to_match.begin();
                 while(it != routers[router_place].port_to_match.end())
                 {
-                    std::set<uint64_t>::iterator iter;
-                    iter = (*it->second).find(i);
-                    if(iter != (*it->second).end())
+                    if((*it->second).count(i) != 0)
                     {
+                        if(topology.count(it->first) == 0)
+                        {
+                            it++;
+                            continue;
+                        }
                         portnum = it->first;
                         flag = false;
                         break;

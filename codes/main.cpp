@@ -7,6 +7,7 @@
 #include <dirent.h>
 #include <string.h>
 #include <time.h>
+#include <unistd.h>
 
 using namespace std;
 
@@ -102,6 +103,7 @@ int main(int argc, char* argv[])
     switch (algr) {
         case 1:
             network_example.brutal_force_with_path(true, true);
+            //network_example.brutal_force_with_path();
             break;
         case 2:
             network_example.brutal_force(true);
@@ -117,59 +119,77 @@ int main(int argc, char* argv[])
             break;
         case 6:
             network_example.segment_based(true);
+            //network_example.segment_based();
             break;
         case 7:
             network_example.segment_no_path(true);
+            //network_example.segment_no_path();
             break;
         case 8:
+            clock_t inter_time11;
+            inter_time11 = clock();
             network_example.brutal_force_with_path();
-            inter_time1 = clock();
-            printf("Brute force with path Total Time : %f s \n", (double)(inter_time1 - startTime) / CLOCKS_PER_SEC);
+            clock_t inter_time12;
+            inter_time12 = clock();
+            printf("Brute force with path Total Time : %f s \n", (double)(inter_time12 - inter_time11) / CLOCKS_PER_SEC);
             network_example.refresh_matrix();
 
-            inter_time1 = clock();
+            clock_t inter_time21;
+            inter_time21 = clock();
             network_example.brutal_force();
-            inter_time2 = clock();
-            printf("Brute force Total Time :           %f s \n", (double)(inter_time2 - inter_time1) / CLOCKS_PER_SEC);
+            clock_t inter_time22;
+            inter_time22 = clock();
+            printf("Brute force Total Time :           %f s \n", (double)(inter_time22 - inter_time21) / CLOCKS_PER_SEC);
             network_example.refresh_matrix();
 
-            inter_time2 = clock();
+            clock_t inter_time31;
+            inter_time31 = clock();
             network_example.warshall_with_path();
-            inter_time3 = clock();
-            printf("Warshall with path Total Time :    %f s \n", (double)(inter_time3 - inter_time2) / CLOCKS_PER_SEC);
+            clock_t inter_time32;
+            inter_time32 = clock();
+            printf("Warshall with path Total Time :    %f s \n", (double)(inter_time32 - inter_time31) / CLOCKS_PER_SEC);
             network_example.refresh_matrix();
 
-            inter_time3 = clock();
-            network_example.segment_based();
-            inter_time4 = clock();
-            printf("Segment with path Total Time :     %f s \n", (double)(inter_time4 - inter_time3) / CLOCKS_PER_SEC);
-            network_example.refresh_matrix();
-
-            inter_time4 = clock();
-            network_example.rule_based();
-            inter_time5 = clock();
-            printf("Rule Based Total Time :            %f s \n", (double)(inter_time5 - inter_time4) / CLOCKS_PER_SEC);
-            network_example.refresh_matrix();
-
-            inter_time5 = clock();
+            clock_t inter_time41;
+            inter_time41 = clock();
             network_example.warshall_no_path();
-            inter_time6 = clock();
-            printf("Warshall no path Total Time :      %f s \n", (double)(inter_time6 - inter_time5) / CLOCKS_PER_SEC);
+            clock_t inter_time42;
+            inter_time42 = clock();
+            printf("Warshall no path Total Time :      %f s \n", (double)(inter_time42 - inter_time41) / CLOCKS_PER_SEC);
             network_example.refresh_matrix();
 
-            inter_time6 = clock();
+            clock_t inter_time51;
+            inter_time51 = clock();
+            network_example.segment_based();
+            clock_t inter_time52;
+            inter_time52 = clock();
+            printf("Segment with path Total Time :     %f s \n", (double)(inter_time52 - inter_time51) / CLOCKS_PER_SEC);
+            network_example.refresh_matrix();
+
+            clock_t inter_time71;
+            inter_time71 = clock();
             network_example.segment_no_path();
-            inter_time7 = clock();
-            printf("Segment no path Total Time :       %f s \n", (double)(inter_time7 - inter_time6) / CLOCKS_PER_SEC);
+            clock_t inter_time72;
+            inter_time72 = clock();
+            printf("Segment no path Total Time :       %f s \n", (double)(inter_time72 - inter_time71) / CLOCKS_PER_SEC);
+            network_example.refresh_matrix();
+
+            clock_t inter_time61;
+            inter_time61 = clock();
+            network_example.rule_based();
+            clock_t inter_time62;
+            inter_time62 = clock();
+            printf("Rule Based Total Time :            %f s \n", (double)(inter_time62 - inter_time61) / CLOCKS_PER_SEC);
+            network_example.refresh_matrix();
             break;
         default:
             printf("1: brutal_force_with_path; 2: brutal_force; 3: warshall_with_path; 4: warshall_no_path; 5: rule_based; 6:segment_based; 7:segment_no_path 8: all.\n");
     }
-
-    bdd_done();
-
+    
     endTime = clock();
     printf("Total Time : %f s \n", (double)(endTime - startTime) / CLOCKS_PER_SEC);
+
+    bdd_done();
 
     return 0;
 }
