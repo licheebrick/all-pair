@@ -20,8 +20,8 @@
 
 using namespace std;
 
-const int router_max = 20;
-const uint64_t rule_type = 241;   //假设有10种流量
+const int router_max = 80;
+const uint64_t rule_type = 16001;   //假设有10种流量
 
 class Network
 {
@@ -41,6 +41,10 @@ public:
     // pre-process rules to number set
     void make_atomic_predicates();
     void convert_router_to_ap();
+
+    // dump and load atomized ruleset
+    void dump_ap_rules_to_file(string file_path);
+    void load_ap_rules_from_file(string file_path);
 
     void refresh_matrix();
     void init_adj_matrix();

@@ -11,7 +11,7 @@
 
 using namespace std;
 
-bool show_detail = true;
+bool show_detail = false;
 
 void load_network_from_dir(string file_path, Network *N) {
     ifstream jsfile;
@@ -65,36 +65,42 @@ int main(int argc, char* argv[])
     // running configs
     bool do_run_test = true;
     int algr = 8;       // algorithm used for reachability calculation
-    int dataset = 2;
+    int dataset = 5;
     /*
         rule_num: REVISE WHEN CHANGE DATASET!!!
-        simple_with_loop: 4; simple_no_loop: 5;
-        fattree-4: 241;   stanford: 133
-        internet2: 38
+        simple_with_loop: 4;    simple_no_loop: 5;
+        fattree-4: 241;         stanford: 133;
+        internet2: 38;          fattree-8: 16001;
         router_max: REVISE WHEN CHANGE DATASET!!!
-        simple_with_loop: 4; simple_no_loop: 4;
-        fattree-4: 20;   stanford: 16
-        internet2: 18
+        simple_with_loop: 4;    simple_no_loop: 4;
+        fattree-4: 20;          stanford: 16;
+        internet2: 18;          fattree-8: 80;
      */
     // test suite:
-    string file_path[5] = {"./examples/simple_with_loop", "./examples/simple_no_loop", "./examples/FatTree-4",
-            "./examples/stanford_ip_fwd", "./examples/internet2"};
-    int hdr[5] = {1, 1, 16, 4, 6};
+    string file_path[6] = {"./examples/simple_with_loop", "./examples/simple_no_loop",
+                           "./examples/FatTree-4", "./examples/stanford_ip_fwd",
+                           "./examples/internet2", "./examples/FatTree-8"};
+    int hdr[6] = {1, 1, 16, 4, 6, 16};
 
     string json_files_path = file_path[dataset];
     int hdr_len = hdr[dataset];    // network header length
     int var_num = 8 * hdr_len;    // BDD variable number
 
     // prepare bdd basics
-    bdd_init(1000000, 1000000);
+    bdd_init(10000000, 10000000);
     bdd_setvarnum(var_num);
 
     Network network_example;
     network_example.set_hdr_len(hdr_len);
 
-    load_network_from_dir(json_files_path, &network_example);
+    string atomic_file = json_files_path + "/rules.json";
 
-    //network_example.print_topology();
+    // use next two lines to generate atomized rules.
+    load_network_from_dir(json_files_path, &network_example);
+    network_example.dump_ap_rules_to_file(atomic_file);
+
+    // use this to load network from generated atomized rules;
+    network_example.load_ap_rules_from_file(atomic_file);
 
     clock_t startTime,endTime;
     clock_t inter_time1, inter_time2, inter_time3, inter_time4, inter_time5, inter_time6, inter_time7;  

@@ -1,0 +1,52 @@
+{
+   "routers" : [
+      {
+         "id" : 1,
+         "index" : 0,
+         "rules" : [
+            {
+               "match" : [ 1, 2, 3 ],
+               "port" : 12
+            },
+            {
+               "match" : [ 0 ],
+               "port" : 13
+            }
+         ]
+      },
+      {
+         "id" : 2,
+         "index" : 1,
+         "rules" : [
+            {
+               "match" : [ 0, 1, 2, 3 ],
+               "port" : 23
+            }
+         ]
+      },
+      {
+         "id" : 3,
+         "index" : 2,
+         "rules" : [
+            {
+               "match" : [ 0, 3 ],
+               "port" : 31
+            },
+            {
+               "match" : [ 2 ],
+               "port" : 34
+            }
+         ]
+      },
+      {
+         "id" : 4,
+         "index" : 3,
+         "rules" : [
+            {
+               "match" : [ 0, 1, 2, 3 ],
+               "port" : 41
+            }
+         ]
+      }
+   ]
+}

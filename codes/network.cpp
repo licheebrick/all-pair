@@ -4,6 +4,8 @@
 
 #include "network.h"
 #include "utils.h"
+#include <fstream>
+#include <sstream>
 
 Reachability Network::rmatrix[router_max][router_max];
 Reachability Network::rmatrix1[router_max][router_max];
@@ -195,6 +197,72 @@ void Network::convert_router_to_ap() {
         }
     }
     printf("-----------------------------------------------------------------\n");
+}
+
+string uint64_to_string(uint64_t value) {
+    std::ostringstream os;
+    os << value;
+    return os.str();
+}
+
+void Network::dump_ap_rules_to_file(string file_path) {
+    Json::Value root;
+    struct timeval start, end;
+    gettimeofday(&start, NULL);
+    for (int i = 0; i < this->r_num; i++) {
+        Json::Value router;
+        for (auto it = this->routers[i].port_to_match.begin(); it != this->routers[i].port_to_match.end(); it++) {
+            Json::Value port_ap;
+            port_ap["port"] = it->first;
+            for (auto jt : (*it->second)) {
+                port_ap["match"].append(jt);
+            }
+            router["rules"].append(port_ap);
+        }
+        router["index"] = i;
+        router["id"] = routers[i].getid();
+        root["routers"].append(router);
+    }
+    std::ofstream file;
+    file.open(file_path);
+    Json::StyledWriter writer;
+    file << writer.write(root);
+    file.close();
+    gettimeofday(&end, NULL);
+    printf("Finish dumping atomized rules to file, time used: %ld us.\n",
+           1000000 * (end.tv_sec - start.tv_sec) + end.tv_usec - start.tv_usec);
+}
+
+void Network::load_ap_rules_from_file(string file_path) {
+    ifstream jsfile;
+    Json::Value root;
+    Json::Reader reader;
+
+    jsfile.open(file_path);
+    if (!jsfile.good()) {
+        printf("Error opening file %s\n", file_path.c_str());
+    }
+    reader.parse(jsfile, root, false);
+    Json::Value rtrs = root["routers"];
+    for (unsigned i = 0; i < rtrs.size(); i++) {
+        this->r_num++;
+        int idx = rtrs[i]["index"].asInt();
+        Json::Value rules = rtrs[i]["rules"];
+        this->routers[i].set_router_id(rtrs[i]["id"].asUInt());
+        for (unsigned j = 0; j < rules.size(); j++) {
+            uint64_t port_id = rules[j]["port"].asUInt64();
+            this->routers[i].port_to_match[port_id] = new set< uint64_t >;
+            Json::Value match_list = rules[j]["match"];
+            for (unsigned k = 0; k < match_list.size(); k++) {
+                this->routers[i].port_to_match[port_id]->insert(match_list[k].asUInt64());
+            }
+        }
+    }
+    jsfile.close();
+    printf("Loaded rules are as follows:\n");
+    for (int i = 0; i < this->r_num; i++) {
+        this->routers[i].print_port_to_match();
+    }
 }
 
 void Network::refresh_matrix()
@@ -452,7 +520,6 @@ void Network::init_adj_matrix() {
         }
         mini_height++;
     }
-    //print_matrix(1);
 }
 
 void Network::warshall_no_path(bool need_print)
