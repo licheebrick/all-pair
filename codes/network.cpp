@@ -199,12 +199,6 @@ void Network::convert_router_to_ap() {
     printf("-----------------------------------------------------------------\n");
 }
 
-string uint64_to_string(uint64_t value) {
-    std::ostringstream os;
-    os << value;
-    return os.str();
-}
-
 void Network::dump_ap_rules_to_file(string file_path) {
     Json::Value root;
     struct timeval start, end;
@@ -259,10 +253,6 @@ void Network::load_ap_rules_from_file(string file_path) {
         }
     }
     jsfile.close();
-    printf("Loaded rules are as follows:\n");
-    for (int i = 0; i < this->r_num; i++) {
-        this->routers[i].print_port_to_match();
-    }
 }
 
 void Network::refresh_matrix()
@@ -525,7 +515,7 @@ void Network::init_adj_matrix() {
 void Network::warshall_no_path(bool need_print)
 {
     init_adj_matrix();
-    
+
     set< uint64_t > adder, muler;
     int rheight, rwidth;
     int k = 0;

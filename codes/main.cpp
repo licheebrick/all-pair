@@ -63,9 +63,9 @@ void load_network_from_dir(string file_path, Network *N) {
 int main(int argc, char* argv[]) 
 {
     // running configs
-    bool do_run_test = true;
-    int algr = 8;       // algorithm used for reachability calculation
-    int dataset = 5;
+    int algr = stoi(argv[1]);  // algorithm used for reachability calculation
+
+    int dataset = 2;
     /*
         rule_num: REVISE WHEN CHANGE DATASET!!!
         simple_with_loop: 4;    simple_no_loop: 5;
@@ -76,6 +76,7 @@ int main(int argc, char* argv[])
         fattree-4: 20;          stanford: 16;
         internet2: 18;          fattree-8: 80;
      */
+
     // test suite:
     string file_path[6] = {"./examples/simple_with_loop", "./examples/simple_no_loop",
                            "./examples/FatTree-4", "./examples/stanford_ip_fwd",
@@ -96,8 +97,8 @@ int main(int argc, char* argv[])
     string atomic_file = json_files_path + "/rules.json";
 
     // use next two lines to generate atomized rules.
-    load_network_from_dir(json_files_path, &network_example);
-    network_example.dump_ap_rules_to_file(atomic_file);
+//    load_network_from_dir(json_files_path, &network_example);
+//    network_example.dump_ap_rules_to_file(atomic_file);
 
     // use this to load network from generated atomized rules;
     network_example.load_ap_rules_from_file(atomic_file);
@@ -108,28 +109,46 @@ int main(int argc, char* argv[])
 
     switch (algr) {
         case 1:
-            network_example.brutal_force_with_path(true, true);
-            //network_example.brutal_force_with_path();
+            inter_time1 = clock();
+            network_example.brutal_force_with_path();
+            inter_time2 = clock();
+            printf("Brute force with path Total Time : %f s \n", (double)(inter_time2 - inter_time1) / CLOCKS_PER_SEC);
             break;
         case 2:
-            network_example.brutal_force(true);
+            inter_time1 = clock();
+            network_example.brutal_force();
+            inter_time2 = clock();
+            printf("Brute force Total Time :           %f s \n", (double)(inter_time2 - inter_time1) / CLOCKS_PER_SEC);
             break;
         case 3:
-            network_example.warshall_with_path(true);
+            inter_time1 = clock();
+            network_example.warshall_with_path();
+            inter_time2 = clock();
+            printf("Warshall with path Total Time :    %f s \n", (double)(inter_time2 - inter_time1) / CLOCKS_PER_SEC);
             break;
         case 4:
-            network_example.warshall_no_path(true);
+            inter_time1 = clock();
+            network_example.warshall_no_path();
+            inter_time2 = clock();
+            printf("Warshall no path Total Time :      %f s \n", (double)(inter_time2 - inter_time1) / CLOCKS_PER_SEC);
             break;
         case 5:
-            network_example.rule_based(true);
+            inter_time1 = clock();
+            network_example.segment_based();
+            inter_time2 = clock();
+            printf("Segment with path Total Time :     %f s \n", (double)(inter_time2 - inter_time1) / CLOCKS_PER_SEC);
             break;
         case 6:
-            network_example.segment_based(true);
-            //network_example.segment_based();
+            inter_time1 = clock();
+            network_example.segment_no_path();
+            inter_time2 = clock();
+            printf("Segment no path Total Time :       %f s \n", (double)(inter_time2 - inter_time1) / CLOCKS_PER_SEC);
             break;
         case 7:
-            network_example.segment_no_path(true);
-            //network_example.segment_no_path();
+            inter_time1 = clock();
+            network_example.rule_based();
+            inter_time2 = clock();
+            printf("Rule Based Total Time :            %f s \n", (double)(inter_time2 - inter_time1) / CLOCKS_PER_SEC);
             break;
         case 8:
             clock_t inter_time11;
@@ -193,7 +212,7 @@ int main(int argc, char* argv[])
     }
     
     endTime = clock();
-    printf("Total Time : %f s \n", (double)(endTime - startTime) / CLOCKS_PER_SEC);
+    // printf("Total Time : %f s \n", (double)(endTime - startTime) / CLOCKS_PER_SEC);
 
     bdd_done();
 
