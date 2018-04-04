@@ -13,12 +13,10 @@ using namespace std;
 
 bool show_detail = false;
 
-void load_network_from_dir(string file_path, Network *N) {
+void load_topology_from_file(string file_path, Network *N) {
     ifstream jsfile;
     Json::Value root;
     Json::Reader reader;
-    int router_counter = 0;
-
     // load topology
     string file_name = file_path + "/" + "topology.json";
     jsfile.open(file_name.c_str());
@@ -33,7 +31,14 @@ void load_network_from_dir(string file_path, Network *N) {
         N->add_link(topology[i]["src"].asUInt64(), topology[i]["dst"].asUInt64());
     }
     jsfile.close();
+}
 
+void load_network_from_dir(string file_path, Network *N) {
+    ifstream jsfile;
+    Json::Value root;
+    Json::Reader reader;
+    int router_counter = 0;
+    string file_name;
     // load ruleset
     struct dirent *ent;
     DIR *dir = opendir(file_path.c_str());
@@ -60,12 +65,18 @@ void load_network_from_dir(string file_path, Network *N) {
     N->convert_router_to_ap();
 }
 
+set< uint64_t > Network::matrix1[router_max][router_max];
+set< uint64_t > Network::matrix2[router_max][router_max];
+set< uint64_t > Network::matrix3[router_max][router_max];
+set< uint64_t > Network::b_matrix[router_max][router_max];
+
 int main(int argc, char* argv[]) 
 {
     // running configs
     int algr = stoi(argv[1]);  // algorithm used for reachability calculation
 
-    int dataset = 2;
+    int dataset = 3;
+    bool print_result = false;
     /*
         rule_num: REVISE WHEN CHANGE DATASET!!!
         simple_with_loop: 4;    simple_no_loop: 5;
@@ -95,12 +106,17 @@ int main(int argc, char* argv[])
     network_example.set_hdr_len(hdr_len);
 
     string atomic_file = json_files_path + "/rules.json";
+    string port2rtr_file = json_files_path + "/ports.json";
 
-    // use next two lines to generate atomized rules.
+    load_topology_from_file(json_files_path, &network_example);
+
+    // use next three lines to generate atomized rules.
 //    load_network_from_dir(json_files_path, &network_example);
 //    network_example.dump_ap_rules_to_file(atomic_file);
+//    network_example.dump_port_to_router_to_file(port2rtr_file);
 
     // use this to load network from generated atomized rules;
+    network_example.load_port_to_router_from_file(port2rtr_file);
     network_example.load_ap_rules_from_file(atomic_file);
 
     clock_t startTime,endTime;
@@ -110,45 +126,52 @@ int main(int argc, char* argv[])
     switch (algr) {
         case 1:
             inter_time1 = clock();
-            network_example.brutal_force_with_path();
+            network_example.brutal_force_with_path(print_result, false);
             inter_time2 = clock();
-            printf("Brute force with path Total Time : %f s \n", (double)(inter_time2 - inter_time1) / CLOCKS_PER_SEC);
+            // printf("Brute force with path Total Time : %f s \n", (double)(inter_time2 - inter_time1) / CLOCKS_PER_SEC);
+            printf("%f s \n", (double)(inter_time2 - inter_time1) / CLOCKS_PER_SEC);
             break;
         case 2:
             inter_time1 = clock();
-            network_example.brutal_force();
+            network_example.brutal_force(print_result);
             inter_time2 = clock();
-            printf("Brute force Total Time :           %f s \n", (double)(inter_time2 - inter_time1) / CLOCKS_PER_SEC);
+            // printf("Brute force Total Time :           %f s \n", (double)(inter_time2 - inter_time1) / CLOCKS_PER_SEC);
+            printf("%f s \n", (double)(inter_time2 - inter_time1) / CLOCKS_PER_SEC);
             break;
         case 3:
             inter_time1 = clock();
-            network_example.warshall_with_path();
+            network_example.warshall_with_path(print_result);
             inter_time2 = clock();
-            printf("Warshall with path Total Time :    %f s \n", (double)(inter_time2 - inter_time1) / CLOCKS_PER_SEC);
+//            printf("Warshall with path Total Time :    %f s \n", (double)(inter_time2 - inter_time1) / CLOCKS_PER_SEC);
+            printf("%f s \n", (double)(inter_time2 - inter_time1) / CLOCKS_PER_SEC);
             break;
         case 4:
             inter_time1 = clock();
-            network_example.warshall_no_path();
+            network_example.warshall_no_path(print_result);
             inter_time2 = clock();
-            printf("Warshall no path Total Time :      %f s \n", (double)(inter_time2 - inter_time1) / CLOCKS_PER_SEC);
+//            printf("Warshall no path Total Time :      %f s \n", (double)(inter_time2 - inter_time1) / CLOCKS_PER_SEC);
+            printf("%f s \n", (double)(inter_time2 - inter_time1) / CLOCKS_PER_SEC);
             break;
         case 5:
             inter_time1 = clock();
-            network_example.segment_based();
+            network_example.segment_based(print_result);
             inter_time2 = clock();
-            printf("Segment with path Total Time :     %f s \n", (double)(inter_time2 - inter_time1) / CLOCKS_PER_SEC);
+//            printf("Segment with path Total Time :     %f s \n", (double)(inter_time2 - inter_time1) / CLOCKS_PER_SEC);
+            printf("%f s \n", (double)(inter_time2 - inter_time1) / CLOCKS_PER_SEC);
             break;
         case 6:
             inter_time1 = clock();
-            network_example.segment_no_path();
+            network_example.segment_no_path(print_result);
             inter_time2 = clock();
-            printf("Segment no path Total Time :       %f s \n", (double)(inter_time2 - inter_time1) / CLOCKS_PER_SEC);
+//            printf("Segment no path Total Time :       %f s \n", (double)(inter_time2 - inter_time1) / CLOCKS_PER_SEC);
+            printf("%f s \n", (double)(inter_time2 - inter_time1) / CLOCKS_PER_SEC);
             break;
         case 7:
             inter_time1 = clock();
-            network_example.rule_based();
+            network_example.rule_based(print_result);
             inter_time2 = clock();
-            printf("Rule Based Total Time :            %f s \n", (double)(inter_time2 - inter_time1) / CLOCKS_PER_SEC);
+//            printf("Rule Based Total Time :            %f s \n", (double)(inter_time2 - inter_time1) / CLOCKS_PER_SEC);            printf("%f s \n", (double)(inter_time2 - inter_time1) / CLOCKS_PER_SEC);
+            printf("%f s \n", (double)(inter_time2 - inter_time1) / CLOCKS_PER_SEC);
             break;
         case 8:
             clock_t inter_time11;
@@ -213,7 +236,8 @@ int main(int argc, char* argv[])
     
     endTime = clock();
     // printf("Total Time : %f s \n", (double)(endTime - startTime) / CLOCKS_PER_SEC);
-
+    if (print_result)
+        printf("====== Finished ======\n");
     bdd_done();
 
     return 0;

@@ -20,8 +20,8 @@
 
 using namespace std;
 
-const int router_max = 20;
-const uint64_t rule_type = 241;   //假设有10种流量
+const int router_max = 16;
+const uint64_t rule_type = 133;   //假设有10种流量
 
 class Network
 {
@@ -43,11 +43,12 @@ public:
     void convert_router_to_ap();
 
     // dump and load atomized ruleset
+    void dump_port_to_router_to_file(string file_path);
+    void load_port_to_router_from_file(string file_path);
     void dump_ap_rules_to_file(string file_path);
     void load_ap_rules_from_file(string file_path);
 
     void refresh_matrix();
-    void init_adj_matrix();
     void print_matrix(int k);
 
     // all pair reachability:
@@ -97,19 +98,17 @@ private:
     // header length
     int hdr_len;
 
+    static set< uint64_t > matrix1[router_max][router_max];
+    static set< uint64_t > matrix2[router_max][router_max];
+    static set< uint64_t > matrix3[router_max][router_max];
+    static set< uint64_t > b_matrix[router_max][router_max];
+
     static Reachability rmatrix[router_max][router_max];
     static Reachability rmatrix1[router_max][router_max];
     static Reachability rmatrix2[router_max][router_max];
     static Reachability rmatrix3[router_max][router_max];
 
-    set< uint64_t > matrix1[router_max][router_max];
-    set< uint64_t > matrix2[router_max][router_max];
-    set< uint64_t > matrix3[router_max][router_max];
-    set< uint64_t > b_matrix[router_max][router_max];
-    int mini_matrix[router_max][router_max][2];
-    int mini_height, mini_width;
-
     Rulebased rulebased;
-}; 
+};
 
 #endif //WARSHALL_NO_PATH_NETWORK_H

@@ -119,21 +119,21 @@ Reachability Reachability::operator+(Reachability &reach)
 Reachability Reachability::operator/(Reachability &reach)
 {
     Reachability insection;
-    std::set<uint64_t> insection_result;
+    std::set<uint64_t>* insection_result = new std::set< uint64_t >;
     std::set_intersection(rules.begin(), rules.end(), 
                             reach.rules.begin(), reach.rules.end(), 
-                            std::inserter(insection_result, insection_result.begin()));
-    insection.set_rules(&insection_result);
+                            std::inserter(*insection_result, insection_result->begin()));
+    insection.set_rules(insection_result);
     return insection;
 }
 
 Reachability Reachability::operator-(Reachability &reach)
 {
     Reachability insection;
-    std::set<uint64_t> insection_result;
+    std::set<uint64_t>* insection_result = new std::set<uint64_t >;
     std::set_union(rules.begin(), rules.end(), 
                             reach.rules.begin(), reach.rules.end(), 
-                            std::inserter(insection_result, insection_result.begin()));
-    insection.set_rules(&insection_result);
+                            std::inserter(*insection_result, insection_result->begin()));
+    insection.set_rules(insection_result);
     return insection;
 }

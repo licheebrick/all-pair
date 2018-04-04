@@ -51,7 +51,7 @@ void Network::print_topology()
     while(it != topology.end())
     {
         printf("from %llu to %llu\n", it->first, it->second);
-        it ++;         
+        it ++;
     }
     printf("-----------------------------------------------------------------\n");
 }
@@ -69,7 +69,7 @@ void Network::print_port_to_router()
     while(it !=port_to_router.end())
     {
         printf("from port %llu to router %d\n", it->first, it->second);
-        it ++;         
+        it ++;
     }
 }
 
@@ -199,6 +199,40 @@ void Network::convert_router_to_ap() {
     printf("-----------------------------------------------------------------\n");
 }
 
+void Network::dump_port_to_router_to_file(string file_path) {
+    Json::Value root;
+    struct timeval start, end;
+    for (auto it = this->port_to_router.begin(); it != this->port_to_router.end(); it++) {
+        Json::Value pair;
+        pair["port"] = it->first;
+        pair["router"] = it->second;
+        root.append(pair);
+    }
+
+    std::ofstream file;
+    file.open(file_path);
+    Json::StyledWriter writer;
+    file << writer.write(root);
+    file.close();
+}
+
+void Network::load_port_to_router_from_file(string file_path) {
+    ifstream jsfile;
+    Json::Value root;
+    Json::Reader reader;
+
+    jsfile.open(file_path);
+    if (!jsfile.good()) {
+        printf("Error opening file %s\n", file_path.c_str());
+    }
+    reader.parse(jsfile, root, false);
+
+    for (unsigned i = 0; i < root.size(); i++) {
+        this->add_port_to_router(root[i]["port"].asUInt64(), root[i]["router"].asInt());
+    }
+    jsfile.close();
+}
+
 void Network::dump_ap_rules_to_file(string file_path) {
     Json::Value root;
     struct timeval start, end;
@@ -245,6 +279,7 @@ void Network::load_ap_rules_from_file(string file_path) {
         this->routers[i].set_router_id(rtrs[i]["id"].asUInt());
         for (unsigned j = 0; j < rules.size(); j++) {
             uint64_t port_id = rules[j]["port"].asUInt64();
+            add_port_to_router(port_id, idx);
             this->routers[i].port_to_match[port_id] = new set< uint64_t >;
             Json::Value match_list = rules[j]["match"];
             for (unsigned k = 0; k < match_list.size(); k++) {
@@ -253,6 +288,7 @@ void Network::load_ap_rules_from_file(string file_path) {
         }
     }
     jsfile.close();
+    this->ap_num = rule_type;
 }
 
 void Network::refresh_matrix()
@@ -280,17 +316,6 @@ void Network::refresh_matrix()
             rmatrix3[i][j] = newone2;
         }
     }
-
-    for(int i = 0; i < router_max; i++)
-    {
-        for(int j = 0; j < router_max; j++)
-        {
-            mini_matrix[i][j][0] = 0;
-            mini_matrix[i][j][1] = 0;
-        }
-    }
-    mini_height = 0;
-    mini_width = 0;
 
     rulebased.clean_up();
 }
@@ -323,19 +348,21 @@ void Network::brutal_force_with_path(bool need_print, bool need_loop)
     {
         for(int j = 0; j < r_num; j++)
         {
-            if(need_print)
-                printf("Searching for path from router %u to router %u...\n", routers[i].getid(), routers[j].getid());
+            //if(need_print)
+                //printf("Searching for path from router %u to router %u...\n", routers[i].getid(), routers[j].getid());
             have_been[i] = true;
             router_stack[stack_place++] = i;
             dfs_search_with_path(i, j, &full_rules, need_loop, need_print);
             router_stack[stack_place--] = -1;
-            if(need_print)
-                printf("===\n");
+            //if(need_print)
+              //  printf("===\n");
             memset(have_been, false, router_max);  // clear state
         }
     }
-    // if(need_print)
-    //     print_matrix(3);
+    if(need_print) {
+        printf("Now printing the result of brute force with path:\n");
+        print_matrix(3);
+    }
 }
 
 void Network::dfs_search_with_path(int router, int destiny, std::set<uint64_t>* rules, bool need_loop, bool need_print)
@@ -360,7 +387,7 @@ void Network::dfs_search_with_path(int router, int destiny, std::set<uint64_t>* 
         // 如果不是空集...
         if (port_to_router[next_port_num] == destiny) { // 如果到了目的地，应该总是第一次到，否则在前边就会记录
             // 首先将这个match加入
-            //b_matrix[router_stack[0]][destiny].insert(new_match->begin(), new_match->end());
+            b_matrix[router_stack[0]][destiny].insert(new_match->begin(), new_match->end());
             router_stack[stack_place++] = destiny;
             if (need_print) {
                 if (need_loop && (destiny == router_stack[0])) {
@@ -402,8 +429,10 @@ void Network::brutal_force(bool need_print) {
             memset(have_been, false, router_max);  // clear state
         }
     }
-    if(need_print)
+    if(need_print) {
+        printf("Now printing the result of brute force no path:\n");
         print_matrix(3);
+    }
 }
 
 void Network::dfs_search(int router, int destiny, std::set<uint64_t>* rules, bool need_print) {
@@ -476,7 +505,8 @@ void Network::print_matrix(int k) {
     printf("=======================\n");
 }
 
-void Network::init_adj_matrix() {
+void Network::warshall_no_path(bool need_print)
+{
     bool is_height[router_max] = {false};
     bool is_width[router_max] = {false};
     for (int i = 0; i < r_num; i++) {
@@ -486,11 +516,12 @@ void Network::init_adj_matrix() {
             int router2 = port_to_router[topology[it->first]];
             this->matrix1[i][router2].insert(it->second->begin(), it->second->end());
             is_height[i] = true;
-            is_width[router2] = true;   
+            is_width[router2] = true;
         }
     }
-    mini_height = 0;
-    mini_width = 0;
+    int mini_matrix[router_max][router_max][2];
+    int mini_height = 0;
+    int mini_width = 0;
     for(int i = 0; i < r_num; i++)
     {
         if(!is_height[i])
@@ -506,34 +537,15 @@ void Network::init_adj_matrix() {
                 mini_matrix[mini_height][mini_width][0] = i;
                 mini_matrix[mini_height][mini_width][1] = j;
                 mini_width++;
-            }   
+            }
         }
         mini_height++;
     }
-}
 
-void Network::warshall_no_path(bool need_print)
-{
-    init_adj_matrix();
-
-    set< uint64_t > adder, muler;
     int rheight, rwidth;
     int k = 0;
     for (k = 0; k < r_num; k++) {
-        if (k % 2 == 0) {
-            for (int i = 0; i < mini_height; i++) {
-                for (int j = 0; j < mini_width; j++) {
-                    rheight = mini_matrix[i][j][0];
-                    rwidth = mini_matrix[i][j][1];
-                    matrix2[rheight][rwidth].clear();
-                    set_intersection(matrix1[rheight][k].begin(), matrix1[rheight][k].end(),
-                                     matrix1[k][rwidth].begin(), matrix1[k][rwidth].end(),
-                                     inserter(matrix2[rheight][rwidth], matrix2[rheight][rwidth].begin()));
-                    matrix2[rheight][rwidth].insert(matrix1[rheight][rwidth].begin(), matrix1[rheight][rwidth].end());
-                }
-            }
-        }
-        else {
+        if (k % 2 == 1) {
             for (int i = 0; i < mini_height; i++) {
                 for (int j = 0; j < mini_width; j++) {
                     rheight = mini_matrix[i][j][0];
@@ -542,26 +554,39 @@ void Network::warshall_no_path(bool need_print)
                     set_intersection(matrix2[rheight][k].begin(), matrix2[rheight][k].end(),
                                      matrix2[k][rwidth].begin(), matrix2[k][rwidth].end(),
                                      inserter(matrix1[rheight][rwidth], matrix1[rheight][rwidth].begin()));
-                    matrix1[rheight][rwidth].insert(matrix2[rheight][rwidth].begin(), matrix2[rheight][rwidth].end());
+                    set_union(matrix2[rheight][rwidth].begin(), matrix2[rheight][rwidth].end(),
+                              matrix1[rheight][rwidth].begin(), matrix1[rheight][rwidth].end(),
+                              inserter(matrix1[rheight][rwidth], matrix1[rheight][rwidth].begin()));
+                    // matrix1[rheight][rwidth].insert(matrix2[rheight][rwidth].begin(), matrix2[rheight][rwidth].end());
                 }
             }
         }
-        // k为偶数的时候算的是matrix2
-        // print_matrix(k);
-        // if(need_print)
-        // {
-        //     printf("%d\n", k);
-        //     print_matrix((k + 1) % 2 + 1);
-        // }
-    }
-    if (r_num % 2 == 1) {
-        for (int i = 0; i < r_num; i++) {
-            for (int j = 0; j < r_num; j++) {
-                matrix1[i][j] = matrix2[i][j];
+        else {
+            for (int i = 0; i < mini_height; i++) {
+                for (int j = 0; j < mini_width; j++) {
+                    rheight = mini_matrix[i][j][0];
+                    rwidth = mini_matrix[i][j][1];
+                    matrix2[rheight][rwidth].clear();
+                    set_intersection(matrix1[rheight][k].begin(), matrix1[rheight][k].end(),
+                                     matrix1[k][rwidth].begin(), matrix1[k][rwidth].end(),
+                                     inserter(matrix2[rheight][rwidth], matrix2[rheight][rwidth].begin()));
+                    set_union(matrix2[rheight][rwidth].begin(), matrix2[rheight][rwidth].end(),
+                              matrix1[rheight][rwidth].begin(), matrix1[rheight][rwidth].end(),
+                              inserter(matrix2[rheight][rwidth], matrix2[rheight][rwidth].begin()));
+                    // matrix2[rheight][rwidth].insert(matrix1[rheight][rwidth].begin(), matrix1[rheight][rwidth].end());
+                }
             }
         }
     }
+//    if (r_num % 2 == 1) {
+//        for (int i = 0; i < r_num; i++) {
+//            for (int j = 0; j < r_num; j++) {
+//                matrix1[i][j] = matrix2[i][j];
+//            }
+//        }
+//    }
     if (need_print) {
+        printf("Now printing the result of warshall no path:\n");
         print_matrix(1);
     }
 }
@@ -587,7 +612,7 @@ void Network::warshall_with_path(bool need_print)
             (*tmp).push_back(routers[router2].getid());
             rmatrix[router1][router2].set_path_to_packets(tmp, it->second);
             is_height[router1] = true;
-            is_width[router2] = true;   
+            is_width[router2] = true;
         }
     }
 
@@ -610,17 +635,17 @@ void Network::warshall_with_path(bool need_print)
                 minimatrix[height][width][0] = i;
                 minimatrix[height][width][1] = j;
                 width++;
-            }   
+            }
         }
         height++;
     }
-    
+
     for(int i = 0; i < r_num; i++)
         for(int j = 0; j < r_num; j++)
             rmatrix1[i][j] = rmatrix[i][j];
     int rheight, rwidth;
     for(int k = 0; k < r_num; k++)
-    {   
+    {
         if(k % 2 == 1)
         {
             for(int i = 0; i < height; i++)
@@ -635,9 +660,9 @@ void Network::warshall_with_path(bool need_print)
                     {
                         rmatrix1[rheight][rwidth] = rmatrix2[rheight][rwidth];
                         continue;
-                    }   
+                    }
                     rmatrix1[rheight][rwidth] = rmatrix2[rheight][k] * rmatrix2[k][rwidth];
-                    rmatrix1[rheight][rwidth] = rmatrix1[rheight][rwidth] + rmatrix2[rheight][rwidth]; 
+                    rmatrix1[rheight][rwidth] = rmatrix1[rheight][rwidth] + rmatrix2[rheight][rwidth];
                 }
             }
         }
@@ -655,7 +680,7 @@ void Network::warshall_with_path(bool need_print)
                     {
                         rmatrix2[rheight][rwidth] = rmatrix1[rheight][rwidth];
                         continue;
-                    }   
+                    }
                     rmatrix2[rheight][rwidth] = rmatrix1[rheight][k] * rmatrix1[k][rwidth];
                     rmatrix2[rheight][rwidth] = rmatrix2[rheight][rwidth] + rmatrix1[rheight][rwidth];
                 }
@@ -664,6 +689,7 @@ void Network::warshall_with_path(bool need_print)
     }
     if(need_print)
     {
+        printf("Now printing the result of warshall with path:\n");
         if(r_num % 2 == 0)
         {
             for(int i = 0; i < r_num; i++)
@@ -691,7 +717,43 @@ void Network::warshall_with_path(bool need_print)
 
 void Network::segment_no_path(bool need_print)
 {
-    init_adj_matrix();
+    // init_adj_matrix();
+    bool is_height[router_max] = {false};
+    bool is_width[router_max] = {false};
+    for (int i = 0; i < r_num; i++) {
+        for (auto it = routers[i].port_to_match.begin(); it != routers[i].port_to_match.end(); it++) {
+            if (topology.count(it->first) == 0)
+                continue;
+            int router2 = port_to_router[topology[it->first]];
+            this->matrix1[i][router2].insert(it->second->begin(), it->second->end());
+            is_height[i] = true;
+            is_width[router2] = true;
+        }
+    }
+
+    int mini_matrix[router_max][router_max][2];
+    int mini_height = 0;
+    int mini_width = 0;
+    for(int i = 0; i < r_num; i++)
+    {
+        if(!is_height[i])
+            continue;
+
+        mini_width = 0;
+        for(int j = 0; j < r_num; j++)
+        {
+            if(!is_width[j])
+                continue;
+            else
+            {
+                mini_matrix[mini_height][mini_width][0] = i;
+                mini_matrix[mini_height][mini_width][1] = j;
+                mini_width++;
+            }
+        }
+        mini_height++;
+    }
+
     set< uint64_t > matrix[router_max][router_max];
 
     set< uint64_t > adder, muler;
@@ -722,8 +784,8 @@ void Network::segment_no_path(bool need_print)
                     matrix3[rheight][rwidth].insert(matrix2[rheight][rwidth].begin(), matrix2[rheight][rwidth].end());
                 }
             }
-            if(need_print)
-                print_matrix(2);
+//            if(need_print)
+//                print_matrix(2);
         } else {
             // k为奇数时算matrix1
             for (int i = 0; i < mini_height; i++) {
@@ -741,11 +803,12 @@ void Network::segment_no_path(bool need_print)
                     matrix3[rheight][j].insert(matrix1[rheight][rwidth].begin(), matrix1[rheight][rwidth].end());
                 }
             }
-            if(need_print)
-                print_matrix(1);
+//            if(need_print)
+//                print_matrix(1);
         }
     }
     if (need_print) {
+        printf("Now printing the result of segment no path:\n");
         print_matrix(4);
     }
 }
@@ -762,7 +825,7 @@ void Network::segment_based(bool need_print)
         for(it = routers[i].port_to_match.begin(); it != routers[i].port_to_match.end(); it++)
         {
             if (topology.count(it->first) == 0)
-                continue;         
+                continue;
             int router1 = i;
             int router2 = port_to_router[topology[it->first]];
             std::list<uint32_t>* tmp;
@@ -771,7 +834,7 @@ void Network::segment_based(bool need_print)
             (*tmp).push_back(routers[router2].getid());
             rmatrix[router1][router2].set_path_to_packets(&(*tmp), it->second);
             is_height[router1] = true;
-            is_width[router2] = true;   
+            is_width[router2] = true;
         }
     }
 
@@ -794,7 +857,7 @@ void Network::segment_based(bool need_print)
                 minimatrix[height][width][0] = i;
                 minimatrix[height][width][1] = j;
                 width++;
-            }   
+            }
         }
         height++;
     }
@@ -810,7 +873,7 @@ void Network::segment_based(bool need_print)
     int rheight, rwidth, rplace;
     //rmatrix3用来存总的，rmatrix1和rmatrix2是分的
     for(int k = 3; k <= r_num; k++)
-    {   
+    {
         if(k % 2 == 1)
         {
             for(int i = 0; i < height; i++)
@@ -864,6 +927,7 @@ void Network::segment_based(bool need_print)
     }
     if(need_print)
     {
+        printf("Now printing the result of segment with path:\n");
         for(int i = 0; i < r_num; i++)
         {
             for(int j = 0; j < r_num; j++)
@@ -882,7 +946,7 @@ void Network::rule_based(bool need_print)
         uint64_t portnum = 0;
         int router_place = 0;
         for(int j = 0; j < r_num; j++)
-        {       
+        {
             router_place = j;
 
             string list_str = "";
@@ -937,6 +1001,8 @@ void Network::rule_based(bool need_print)
         }
     }
 
-    if(need_print)
+    if(need_print) {
+        printf("Now printing the result of rule-based:\n");
         rulebased.print_rule_map();
+    }
 }

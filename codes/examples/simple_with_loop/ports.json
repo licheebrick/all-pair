@@ -1,0 +1,42 @@
+[
+   {
+      "port" : 12,
+      "router" : 0
+   },
+   {
+      "port" : 13,
+      "router" : 0
+   },
+   {
+      "port" : 14,
+      "router" : 0
+   },
+   {
+      "port" : 21,
+      "router" : 1
+   },
+   {
+      "port" : 23,
+      "router" : 1
+   },
+   {
+      "port" : 31,
+      "router" : 2
+   },
+   {
+      "port" : 32,
+      "router" : 2
+   },
+   {
+      "port" : 34,
+      "router" : 2
+   },
+   {
+      "port" : 41,
+      "router" : 3
+   },
+   {
+      "port" : 43,
+      "router" : 3
+   }
+]

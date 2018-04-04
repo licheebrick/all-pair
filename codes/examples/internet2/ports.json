@@ -1,0 +1,894 @@
+[
+   {
+      "port" : 100001,
+      "router" : 1
+   },
+   {
+      "port" : 100004,
+      "router" : 1
+   },
+   {
+      "port" : 100007,
+      "router" : 1
+   },
+   {
+      "port" : 100008,
+      "router" : 1
+   },
+   {
+      "port" : 100009,
+      "router" : 1
+   },
+   {
+      "port" : 100010,
+      "router" : 1
+   },
+   {
+      "port" : 100015,
+      "router" : 1
+   },
+   {
+      "port" : 100017,
+      "router" : 1
+   },
+   {
+      "port" : 100018,
+      "router" : 1
+   },
+   {
+      "port" : 100019,
+      "router" : 1
+   },
+   {
+      "port" : 100020,
+      "router" : 1
+   },
+   {
+      "port" : 100021,
+      "router" : 1
+   },
+   {
+      "port" : 100022,
+      "router" : 1
+   },
+   {
+      "port" : 100023,
+      "router" : 1
+   },
+   {
+      "port" : 100024,
+      "router" : 1
+   },
+   {
+      "port" : 100025,
+      "router" : 1
+   },
+   {
+      "port" : 100026,
+      "router" : 1
+   },
+   {
+      "port" : 100027,
+      "router" : 1
+   },
+   {
+      "port" : 100028,
+      "router" : 1
+   },
+   {
+      "port" : 100030,
+      "router" : 1
+   },
+   {
+      "port" : 100031,
+      "router" : 1
+   },
+   {
+      "port" : 100032,
+      "router" : 1
+   },
+   {
+      "port" : 100033,
+      "router" : 1
+   },
+   {
+      "port" : 200002,
+      "router" : 3
+   },
+   {
+      "port" : 200003,
+      "router" : 3
+   },
+   {
+      "port" : 200004,
+      "router" : 3
+   },
+   {
+      "port" : 200005,
+      "router" : 3
+   },
+   {
+      "port" : 200007,
+      "router" : 3
+   },
+   {
+      "port" : 200008,
+      "router" : 3
+   },
+   {
+      "port" : 200009,
+      "router" : 3
+   },
+   {
+      "port" : 200010,
+      "router" : 3
+   },
+   {
+      "port" : 200011,
+      "router" : 3
+   },
+   {
+      "port" : 200012,
+      "router" : 3
+   },
+   {
+      "port" : 200017,
+      "router" : 3
+   },
+   {
+      "port" : 200018,
+      "router" : 3
+   },
+   {
+      "port" : 200019,
+      "router" : 3
+   },
+   {
+      "port" : 200020,
+      "router" : 3
+   },
+   {
+      "port" : 200022,
+      "router" : 3
+   },
+   {
+      "port" : 200023,
+      "router" : 3
+   },
+   {
+      "port" : 200024,
+      "router" : 3
+   },
+   {
+      "port" : 200025,
+      "router" : 3
+   },
+   {
+      "port" : 200026,
+      "router" : 3
+   },
+   {
+      "port" : 200027,
+      "router" : 3
+   },
+   {
+      "port" : 200028,
+      "router" : 3
+   },
+   {
+      "port" : 200029,
+      "router" : 3
+   },
+   {
+      "port" : 200030,
+      "router" : 3
+   },
+   {
+      "port" : 200031,
+      "router" : 3
+   },
+   {
+      "port" : 200035,
+      "router" : 3
+   },
+   {
+      "port" : 200036,
+      "router" : 3
+   },
+   {
+      "port" : 200037,
+      "router" : 3
+   },
+   {
+      "port" : 200038,
+      "router" : 3
+   },
+   {
+      "port" : 200039,
+      "router" : 3
+   },
+   {
+      "port" : 200040,
+      "router" : 3
+   },
+   {
+      "port" : 200041,
+      "router" : 3
+   },
+   {
+      "port" : 200043,
+      "router" : 3
+   },
+   {
+      "port" : 200044,
+      "router" : 3
+   },
+   {
+      "port" : 200045,
+      "router" : 3
+   },
+   {
+      "port" : 200046,
+      "router" : 3
+   },
+   {
+      "port" : 200047,
+      "router" : 3
+   },
+   {
+      "port" : 300001,
+      "router" : 5
+   },
+   {
+      "port" : 300003,
+      "router" : 5
+   },
+   {
+      "port" : 300004,
+      "router" : 5
+   },
+   {
+      "port" : 300005,
+      "router" : 5
+   },
+   {
+      "port" : 300007,
+      "router" : 5
+   },
+   {
+      "port" : 300010,
+      "router" : 5
+   },
+   {
+      "port" : 300011,
+      "router" : 5
+   },
+   {
+      "port" : 300013,
+      "router" : 5
+   },
+   {
+      "port" : 300018,
+      "router" : 5
+   },
+   {
+      "port" : 300019,
+      "router" : 5
+   },
+   {
+      "port" : 300021,
+      "router" : 5
+   },
+   {
+      "port" : 300022,
+      "router" : 5
+   },
+   {
+      "port" : 300026,
+      "router" : 5
+   },
+   {
+      "port" : 300030,
+      "router" : 5
+   },
+   {
+      "port" : 300033,
+      "router" : 5
+   },
+   {
+      "port" : 300043,
+      "router" : 5
+   },
+   {
+      "port" : 300045,
+      "router" : 5
+   },
+   {
+      "port" : 300046,
+      "router" : 5
+   },
+   {
+      "port" : 300047,
+      "router" : 5
+   },
+   {
+      "port" : 300049,
+      "router" : 5
+   },
+   {
+      "port" : 300050,
+      "router" : 5
+   },
+   {
+      "port" : 400005,
+      "router" : 7
+   },
+   {
+      "port" : 400006,
+      "router" : 7
+   },
+   {
+      "port" : 400007,
+      "router" : 7
+   },
+   {
+      "port" : 400008,
+      "router" : 7
+   },
+   {
+      "port" : 400009,
+      "router" : 7
+   },
+   {
+      "port" : 400010,
+      "router" : 7
+   },
+   {
+      "port" : 400011,
+      "router" : 7
+   },
+   {
+      "port" : 400012,
+      "router" : 7
+   },
+   {
+      "port" : 400014,
+      "router" : 7
+   },
+   {
+      "port" : 400016,
+      "router" : 7
+   },
+   {
+      "port" : 400017,
+      "router" : 7
+   },
+   {
+      "port" : 400018,
+      "router" : 7
+   },
+   {
+      "port" : 400019,
+      "router" : 7
+   },
+   {
+      "port" : 400020,
+      "router" : 7
+   },
+   {
+      "port" : 400021,
+      "router" : 7
+   },
+   {
+      "port" : 400022,
+      "router" : 7
+   },
+   {
+      "port" : 400023,
+      "router" : 7
+   },
+   {
+      "port" : 400024,
+      "router" : 7
+   },
+   {
+      "port" : 400025,
+      "router" : 7
+   },
+   {
+      "port" : 400026,
+      "router" : 7
+   },
+   {
+      "port" : 400027,
+      "router" : 7
+   },
+   {
+      "port" : 400029,
+      "router" : 7
+   },
+   {
+      "port" : 400030,
+      "router" : 7
+   },
+   {
+      "port" : 400031,
+      "router" : 7
+   },
+   {
+      "port" : 400032,
+      "router" : 7
+   },
+   {
+      "port" : 500005,
+      "router" : 9
+   },
+   {
+      "port" : 500006,
+      "router" : 9
+   },
+   {
+      "port" : 500007,
+      "router" : 9
+   },
+   {
+      "port" : 500008,
+      "router" : 9
+   },
+   {
+      "port" : 500012,
+      "router" : 9
+   },
+   {
+      "port" : 500013,
+      "router" : 9
+   },
+   {
+      "port" : 500015,
+      "router" : 9
+   },
+   {
+      "port" : 500017,
+      "router" : 9
+   },
+   {
+      "port" : 500018,
+      "router" : 9
+   },
+   {
+      "port" : 500019,
+      "router" : 9
+   },
+   {
+      "port" : 500020,
+      "router" : 9
+   },
+   {
+      "port" : 500021,
+      "router" : 9
+   },
+   {
+      "port" : 500022,
+      "router" : 9
+   },
+   {
+      "port" : 500023,
+      "router" : 9
+   },
+   {
+      "port" : 500024,
+      "router" : 9
+   },
+   {
+      "port" : 500025,
+      "router" : 9
+   },
+   {
+      "port" : 500026,
+      "router" : 9
+   },
+   {
+      "port" : 500027,
+      "router" : 9
+   },
+   {
+      "port" : 500028,
+      "router" : 9
+   },
+   {
+      "port" : 500029,
+      "router" : 9
+   },
+   {
+      "port" : 500031,
+      "router" : 9
+   },
+   {
+      "port" : 500033,
+      "router" : 9
+   },
+   {
+      "port" : 600001,
+      "router" : 11
+   },
+   {
+      "port" : 600002,
+      "router" : 11
+   },
+   {
+      "port" : 600003,
+      "router" : 11
+   },
+   {
+      "port" : 600004,
+      "router" : 11
+   },
+   {
+      "port" : 600008,
+      "router" : 11
+   },
+   {
+      "port" : 600009,
+      "router" : 11
+   },
+   {
+      "port" : 600010,
+      "router" : 11
+   },
+   {
+      "port" : 600011,
+      "router" : 11
+   },
+   {
+      "port" : 600012,
+      "router" : 11
+   },
+   {
+      "port" : 600014,
+      "router" : 11
+   },
+   {
+      "port" : 600016,
+      "router" : 11
+   },
+   {
+      "port" : 600018,
+      "router" : 11
+   },
+   {
+      "port" : 600020,
+      "router" : 11
+   },
+   {
+      "port" : 600021,
+      "router" : 11
+   },
+   {
+      "port" : 600022,
+      "router" : 11
+   },
+   {
+      "port" : 600023,
+      "router" : 11
+   },
+   {
+      "port" : 600024,
+      "router" : 11
+   },
+   {
+      "port" : 600025,
+      "router" : 11
+   },
+   {
+      "port" : 600026,
+      "router" : 11
+   },
+   {
+      "port" : 600027,
+      "router" : 11
+   },
+   {
+      "port" : 600029,
+      "router" : 11
+   },
+   {
+      "port" : 600030,
+      "router" : 11
+   },
+   {
+      "port" : 600032,
+      "router" : 11
+   },
+   {
+      "port" : 600035,
+      "router" : 11
+   },
+   {
+      "port" : 600036,
+      "router" : 11
+   },
+   {
+      "port" : 700004,
+      "router" : 13
+   },
+   {
+      "port" : 700005,
+      "router" : 13
+   },
+   {
+      "port" : 700006,
+      "router" : 13
+   },
+   {
+      "port" : 700007,
+      "router" : 13
+   },
+   {
+      "port" : 700008,
+      "router" : 13
+   },
+   {
+      "port" : 700009,
+      "router" : 13
+   },
+   {
+      "port" : 700011,
+      "router" : 13
+   },
+   {
+      "port" : 700013,
+      "router" : 13
+   },
+   {
+      "port" : 700014,
+      "router" : 13
+   },
+   {
+      "port" : 700015,
+      "router" : 13
+   },
+   {
+      "port" : 700016,
+      "router" : 13
+   },
+   {
+      "port" : 700017,
+      "router" : 13
+   },
+   {
+      "port" : 700018,
+      "router" : 13
+   },
+   {
+      "port" : 700019,
+      "router" : 13
+   },
+   {
+      "port" : 700020,
+      "router" : 13
+   },
+   {
+      "port" : 700021,
+      "router" : 13
+   },
+   {
+      "port" : 700022,
+      "router" : 13
+   },
+   {
+      "port" : 700023,
+      "router" : 13
+   },
+   {
+      "port" : 800002,
+      "router" : 15
+   },
+   {
+      "port" : 800003,
+      "router" : 15
+   },
+   {
+      "port" : 800004,
+      "router" : 15
+   },
+   {
+      "port" : 800008,
+      "router" : 15
+   },
+   {
+      "port" : 800011,
+      "router" : 15
+   },
+   {
+      "port" : 800012,
+      "router" : 15
+   },
+   {
+      "port" : 800013,
+      "router" : 15
+   },
+   {
+      "port" : 800016,
+      "router" : 15
+   },
+   {
+      "port" : 800019,
+      "router" : 15
+   },
+   {
+      "port" : 800022,
+      "router" : 15
+   },
+   {
+      "port" : 800026,
+      "router" : 15
+   },
+   {
+      "port" : 800029,
+      "router" : 15
+   },
+   {
+      "port" : 800030,
+      "router" : 15
+   },
+   {
+      "port" : 800031,
+      "router" : 15
+   },
+   {
+      "port" : 800033,
+      "router" : 15
+   },
+   {
+      "port" : 800034,
+      "router" : 15
+   },
+   {
+      "port" : 800036,
+      "router" : 15
+   },
+   {
+      "port" : 800037,
+      "router" : 15
+   },
+   {
+      "port" : 900001,
+      "router" : 17
+   },
+   {
+      "port" : 900002,
+      "router" : 17
+   },
+   {
+      "port" : 900003,
+      "router" : 17
+   },
+   {
+      "port" : 900005,
+      "router" : 17
+   },
+   {
+      "port" : 900009,
+      "router" : 17
+   },
+   {
+      "port" : 900010,
+      "router" : 17
+   },
+   {
+      "port" : 900011,
+      "router" : 17
+   },
+   {
+      "port" : 900012,
+      "router" : 17
+   },
+   {
+      "port" : 900015,
+      "router" : 17
+   },
+   {
+      "port" : 900016,
+      "router" : 17
+   },
+   {
+      "port" : 900017,
+      "router" : 17
+   },
+   {
+      "port" : 900018,
+      "router" : 17
+   },
+   {
+      "port" : 900020,
+      "router" : 17
+   },
+   {
+      "port" : 900021,
+      "router" : 17
+   },
+   {
+      "port" : 900022,
+      "router" : 17
+   },
+   {
+      "port" : 900023,
+      "router" : 17
+   },
+   {
+      "port" : 900025,
+      "router" : 17
+   },
+   {
+      "port" : 900027,
+      "router" : 17
+   },
+   {
+      "port" : 900028,
+      "router" : 17
+   },
+   {
+      "port" : 900029,
+      "router" : 17
+   },
+   {
+      "port" : 900030,
+      "router" : 17
+   },
+   {
+      "port" : 900031,
+      "router" : 17
+   },
+   {
+      "port" : 900032,
+      "router" : 17
+   },
+   {
+      "port" : 900033,
+      "router" : 17
+   },
+   {
+      "port" : 900034,
+      "router" : 17
+   },
+   {
+      "port" : 900035,
+      "router" : 17
+   },
+   {
+      "port" : 900036,
+      "router" : 17
+   },
+   {
+      "port" : 900037,
+      "router" : 17
+   },
+   {
+      "port" : 900039,
+      "router" : 17
+   },
+   {
+      "port" : 900042,
+      "router" : 17
+   },
+   {
+      "port" : 900043,
+      "router" : 17
+   },
+   {
+      "port" : 900044,
+      "router" : 17
+   },
+   {
+      "port" : 900045,
+      "router" : 17
+   },
+   {
+      "port" : 900048,
+      "router" : 17
+   },
+   {
+      "port" : 900049,
+      "router" : 17
+   }
+]
