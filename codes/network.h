@@ -20,8 +20,8 @@
 
 using namespace std;
 
-const int router_max = 16;
-const uint64_t rule_type = 133;   //假设有10种流量
+const int router_max = 4;
+const uint64_t rule_type = 10;   //假设有10种流量
 
 class Network
 {

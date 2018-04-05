@@ -70,13 +70,17 @@ set< uint64_t > Network::matrix2[router_max][router_max];
 set< uint64_t > Network::matrix3[router_max][router_max];
 set< uint64_t > Network::b_matrix[router_max][router_max];
 
-int main(int argc, char* argv[]) 
+int main(int argc, char* argv[])
 {
     // running configs
     int algr = stoi(argv[1]);  // algorithm used for reachability calculation
 
-    int dataset = 3;
+    int dataset = 6;
+
     bool print_result = false;
+
+    if (stoi(argv[2]) == 1)
+        print_result = true;
     /*
         rule_num: REVISE WHEN CHANGE DATASET!!!
         simple_with_loop: 4;    simple_no_loop: 5;
@@ -89,18 +93,20 @@ int main(int argc, char* argv[])
      */
 
     // test suite:
-    string file_path[6] = {"./examples/simple_with_loop", "./examples/simple_no_loop",
+    string file_path[7] = {"./examples/simple_with_loop", "./examples/simple_no_loop",
                            "./examples/FatTree-4", "./examples/stanford_ip_fwd",
-                           "./examples/internet2", "./examples/FatTree-8"};
-    int hdr[6] = {1, 1, 16, 4, 6, 16};
+                           "./examples/internet2", "./examples/FatTree-8",
+                           "./examples/Aarnet"};
+    int hdr[7] = {1, 1, 16, 4, 6, 16, 10};
 
-    string json_files_path = file_path[dataset];
+    // string json_files_path = file_path[dataset];
+    string json_files_path = "./examples/Arpanet196912";
     int hdr_len = hdr[dataset];    // network header length
     int var_num = 8 * hdr_len;    // BDD variable number
 
     // prepare bdd basics
-    bdd_init(10000000, 10000000);
-    bdd_setvarnum(var_num);
+    // bdd_init(10000000, 10000000);
+    // bdd_setvarnum(var_num);
 
     Network network_example;
     network_example.set_hdr_len(hdr_len);
@@ -120,7 +126,7 @@ int main(int argc, char* argv[])
     network_example.load_ap_rules_from_file(atomic_file);
 
     clock_t startTime,endTime;
-    clock_t inter_time1, inter_time2, inter_time3, inter_time4, inter_time5, inter_time6, inter_time7;  
+    clock_t inter_time1, inter_time2, inter_time3, inter_time4, inter_time5, inter_time6, inter_time7;
     startTime = clock();
 
     switch (algr) {
@@ -233,12 +239,12 @@ int main(int argc, char* argv[])
         default:
             printf("1: brutal_force_with_path; 2: brutal_force; 3: warshall_with_path; 4: warshall_no_path; 5: rule_based; 6:segment_based; 7:segment_no_path 8: all.\n");
     }
-    
+
     endTime = clock();
     // printf("Total Time : %f s \n", (double)(endTime - startTime) / CLOCKS_PER_SEC);
     if (print_result)
         printf("====== Finished ======\n");
-    bdd_done();
+    // bdd_done();
 
     return 0;
 }
