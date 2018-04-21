@@ -72,41 +72,81 @@ set< uint64_t > Network::b_matrix[router_max][router_max];
 
 int main(int argc, char* argv[])
 {
-    // running configs
-    int algr = stoi(argv[1]);  // algorithm used for reachability calculation
-
-    int dataset = 6;
-
+    /*
+    rule_num: REVISE WHEN CHANGE DATASET!!!
+    simple_with_loop: 4;    simple_no_loop: 5;
+    fattree-4: 241;         stanford: 133;
+    internet2: 38;          fattree-8: 16001;
+    router_max: REVISE WHEN CHANGE DATASET!!!
+    simple_with_loop: 4;    simple_no_loop: 4;
+    fattree-4: 20;          stanford: 16;
+    internet2: 18;          fattree-8: 80;
+    */
+    int mode = 1;
+    int algr = 1;
+    string json_files_path;
+    int hdr_len = 1;    // network header length
+    int var_num;    // BDD variable number
     bool print_result = false;
 
-    if (stoi(argv[2]) == 1)
-        print_result = true;
-    /*
-        rule_num: REVISE WHEN CHANGE DATASET!!!
-        simple_with_loop: 4;    simple_no_loop: 5;
-        fattree-4: 241;         stanford: 133;
-        internet2: 38;          fattree-8: 16001;
-        router_max: REVISE WHEN CHANGE DATASET!!!
-        simple_with_loop: 4;    simple_no_loop: 4;
-        fattree-4: 20;          stanford: 16;
-        internet2: 18;          fattree-8: 80;
-     */
+    for (int i = 1; i < argc; i++) {
+        if ( strcmp(argv[i] , "--help") == 0 ) {
+            printf("Usage: all-pair [run option(s)][settings]\n");
+            printf("  run options:\n");
+            printf("\t --mode <mode> : running mode.\n");
+            printf("\t \t 1: load non-atomic rules; 2: load atomic rules; 3: generate atomic rules to file.\n");
+            printf("\t --load <path> : load the rules from json files in the <path>. Don't forget to revise router_max and rule_type in network.h and rebuild when change test ruleset.\n");
+            printf("\t --algorithm <algr> : The algorithm used to calculate all-pair reachability.\n");
+            printf("\t \t 1: brutal_force_with_path; 2: brute_force_without_path.\n");
+            printf("\t \t 3: warshall_with_path; 4: warshall_without_path.\n");
+            printf("\t \t 5: segment_with_path; 6: segment_without_path.\n");
+            printf("\t \t 7: rule_based.\n");
 
-    // test suite:
-    string file_path[7] = {"./examples/simple_with_loop", "./examples/simple_no_loop",
-                           "./examples/FatTree-4", "./examples/stanford_ip_fwd",
-                           "./examples/internet2", "./examples/FatTree-8",
-                           "./examples/Aarnet"};
-    int hdr[7] = {1, 1, 16, 4, 6, 16, 10};
+            printf("  settings:\n");
+            printf("\t --hdr-len <length> : <length> of packet header (default is 1 byte).\n");
+            printf("\t -detailed : show detailed router information in console.\n");
+            return -1;
+            break;
+        }
 
-    // string json_files_path = file_path[dataset];
-    string json_files_path = "./examples/Arpanet196912";
-    int hdr_len = hdr[dataset];    // network header length
-    int var_num = 8 * hdr_len;    // BDD variable number
+        if ( strcmp(argv[i],"--load") == 0)  {
+            if (i+1 >= argc) {
+                printf("Please specify path to json files after --load.\n");
+                return -1;
+            }
+            json_files_path = string(argv[++i]);
+        }
 
-    // prepare bdd basics
-    // bdd_init(10000000, 10000000);
-    // bdd_setvarnum(var_num);
+        if ( strcmp(argv[i],"--algorithm") == 0)  {
+            if (i+1 >= argc) {
+                printf("Please specify algorithm chosen after --algorithm.\n");
+                return -1;
+            }
+            algr = atoi(argv[++i]);
+        }
+
+        if ( strcmp(argv[i],"--hdr-len") == 0 ) {
+            if (i+1 >= argc) {
+                printf("Please specify length of header after --hdr-len.\n");
+                return -1;
+            }
+            hdr_len = atoi(argv[++i]);
+        }
+
+        if ( strcmp(argv[i],"--mode") == 0 ) {
+            if (i+1 >= argc) {
+                printf("Please specify mode of the program after --mode.\n");
+                return -1;
+            }
+            mode = atoi(argv[++i]);
+        }
+
+        if ( strcmp(argv[i], "-detailed") == 0) {
+            print_result = true;
+        }
+    }
+
+    var_num = 8 * hdr_len;
 
     Network network_example;
     network_example.set_hdr_len(hdr_len);
@@ -116,14 +156,27 @@ int main(int argc, char* argv[])
 
     load_topology_from_file(json_files_path, &network_example);
 
-    // use next three lines to generate atomized rules.
-//    load_network_from_dir(json_files_path, &network_example);
-//    network_example.dump_ap_rules_to_file(atomic_file);
-//    network_example.dump_port_to_router_to_file(port2rtr_file);
+    if (mode == 1)
+    {
+        // prepare bdd basics
+        bdd_init(10000000, 10000000);
+        bdd_setvarnum(var_num);
+        load_network_from_dir(json_files_path, &network_example);
+    }
 
-    // use this to load network from generated atomized rules;
-    network_example.load_port_to_router_from_file(port2rtr_file);
-    network_example.load_ap_rules_from_file(atomic_file);
+    if (mode == 3)
+    {
+        // use next three lines to generate atomized rules.
+        load_network_from_dir(json_files_path, &network_example);
+        network_example.dump_ap_rules_to_file(atomic_file);
+        network_example.dump_port_to_router_to_file(port2rtr_file);
+        printf("Finish generate and dump atomic rules to file.\n");
+    }
+
+    if (mode == 2) {
+        network_example.load_port_to_router_from_file(port2rtr_file);
+        network_example.load_ap_rules_from_file(atomic_file);
+    }
 
     clock_t startTime,endTime;
     clock_t inter_time1, inter_time2, inter_time3, inter_time4, inter_time5, inter_time6, inter_time7;
@@ -134,50 +187,43 @@ int main(int argc, char* argv[])
             inter_time1 = clock();
             network_example.brutal_force_with_path(print_result, false);
             inter_time2 = clock();
-            // printf("Brute force with path Total Time : %f s \n", (double)(inter_time2 - inter_time1) / CLOCKS_PER_SEC);
-            printf("%f s \n", (double)(inter_time2 - inter_time1) / CLOCKS_PER_SEC);
+            printf("Brute force with path Total Time : %f s \n", (double)(inter_time2 - inter_time1) / CLOCKS_PER_SEC);
             break;
         case 2:
             inter_time1 = clock();
             network_example.brutal_force(print_result);
             inter_time2 = clock();
-            // printf("Brute force Total Time :           %f s \n", (double)(inter_time2 - inter_time1) / CLOCKS_PER_SEC);
-            printf("%f s \n", (double)(inter_time2 - inter_time1) / CLOCKS_PER_SEC);
+            printf("Brute force Total Time :           %f s \n", (double)(inter_time2 - inter_time1) / CLOCKS_PER_SEC);
             break;
         case 3:
             inter_time1 = clock();
             network_example.warshall_with_path(print_result);
             inter_time2 = clock();
-//            printf("Warshall with path Total Time :    %f s \n", (double)(inter_time2 - inter_time1) / CLOCKS_PER_SEC);
-            printf("%f s \n", (double)(inter_time2 - inter_time1) / CLOCKS_PER_SEC);
+            printf("Warshall with path Total Time :    %f s \n", (double)(inter_time2 - inter_time1) / CLOCKS_PER_SEC);
             break;
         case 4:
             inter_time1 = clock();
             network_example.warshall_no_path(print_result);
             inter_time2 = clock();
-//            printf("Warshall no path Total Time :      %f s \n", (double)(inter_time2 - inter_time1) / CLOCKS_PER_SEC);
-            printf("%f s \n", (double)(inter_time2 - inter_time1) / CLOCKS_PER_SEC);
+            printf("Warshall no path Total Time :      %f s \n", (double)(inter_time2 - inter_time1) / CLOCKS_PER_SEC);
             break;
         case 5:
             inter_time1 = clock();
             network_example.segment_based(print_result);
             inter_time2 = clock();
-//            printf("Segment with path Total Time :     %f s \n", (double)(inter_time2 - inter_time1) / CLOCKS_PER_SEC);
-            printf("%f s \n", (double)(inter_time2 - inter_time1) / CLOCKS_PER_SEC);
+            printf("Segment with path Total Time :     %f s \n", (double)(inter_time2 - inter_time1) / CLOCKS_PER_SEC);
             break;
         case 6:
             inter_time1 = clock();
             network_example.segment_no_path(print_result);
             inter_time2 = clock();
-//            printf("Segment no path Total Time :       %f s \n", (double)(inter_time2 - inter_time1) / CLOCKS_PER_SEC);
-            printf("%f s \n", (double)(inter_time2 - inter_time1) / CLOCKS_PER_SEC);
+            printf("Segment no path Total Time :       %f s \n", (double)(inter_time2 - inter_time1) / CLOCKS_PER_SEC);
             break;
         case 7:
             inter_time1 = clock();
             network_example.rule_based(print_result);
             inter_time2 = clock();
-//            printf("Rule Based Total Time :            %f s \n", (double)(inter_time2 - inter_time1) / CLOCKS_PER_SEC);            printf("%f s \n", (double)(inter_time2 - inter_time1) / CLOCKS_PER_SEC);
-            printf("%f s \n", (double)(inter_time2 - inter_time1) / CLOCKS_PER_SEC);
+            printf("Rule Based Total Time :            %f s \n", (double)(inter_time2 - inter_time1) / CLOCKS_PER_SEC);            printf("%f s \n", (double)(inter_time2 - inter_time1) / CLOCKS_PER_SEC);
             break;
         case 8:
             clock_t inter_time11;
@@ -241,10 +287,10 @@ int main(int argc, char* argv[])
     }
 
     endTime = clock();
-    // printf("Total Time : %f s \n", (double)(endTime - startTime) / CLOCKS_PER_SEC);
-    if (print_result)
-        printf("====== Finished ======\n");
-    // bdd_done();
+    printf("Total Time : %f s \n", (double)(endTime - startTime) / CLOCKS_PER_SEC);
+
+    if (mode == 1)
+        bdd_done();
 
     return 0;
 }

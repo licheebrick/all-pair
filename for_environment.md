@@ -19,10 +19,10 @@
 ##### 下载地址：
 
 	https://github.com/open-source-parsers/jsoncpp
-	
+
 ##### 安装方法：
 
-按照readme中方法。注意：其中那个DESTDIR是假的，不知道怎么用。
+按照readme中方法。
 
 	cd jsoncpp/
 	BUILD_TYPE=debug

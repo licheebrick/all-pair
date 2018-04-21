@@ -33,9 +33,9 @@ Network::~Network()
     // delete atomic predicate list
     // delete this->ap_bdd_list;
 
-    for (int i = 0; i < this->r_num; i++) {
-        delete predicate_map[i];
-    }
+//    for (int i = 0; i < this->r_num; i++) {
+//        delete predicate_map[i];
+//    }
 }
 
 void Network::add_link(uint64_t from_port, uint64_t to_port)
@@ -578,13 +578,6 @@ void Network::warshall_no_path(bool need_print)
             }
         }
     }
-//    if (r_num % 2 == 1) {
-//        for (int i = 0; i < r_num; i++) {
-//            for (int j = 0; j < r_num; j++) {
-//                matrix1[i][j] = matrix2[i][j];
-//            }
-//        }
-//    }
     if (need_print) {
         printf("Now printing the result of warshall no path:\n");
         print_matrix(1);
@@ -654,8 +647,6 @@ void Network::warshall_with_path(bool need_print)
                 {
                     rheight = minimatrix[i][j][0];
                     rwidth = minimatrix[i][j][1];
-                    // rheight = i;
-                    // rwidth = j;
                     if(rheight == k || rwidth == k)
                     {
                         rmatrix1[rheight][rwidth] = rmatrix2[rheight][rwidth];
@@ -674,8 +665,6 @@ void Network::warshall_with_path(bool need_print)
                 {
                     rheight = minimatrix[i][j][0];
                     rwidth = minimatrix[i][j][1];
-                    // rheight = i;
-                    // rwidth = j;
                     if(rheight == k || rwidth == k)
                     {
                         rmatrix2[rheight][rwidth] = rmatrix1[rheight][rwidth];
@@ -784,8 +773,6 @@ void Network::segment_no_path(bool need_print)
                     matrix3[rheight][rwidth].insert(matrix2[rheight][rwidth].begin(), matrix2[rheight][rwidth].end());
                 }
             }
-//            if(need_print)
-//                print_matrix(2);
         } else {
             // k为奇数时算matrix1
             for (int i = 0; i < mini_height; i++) {
@@ -803,8 +790,6 @@ void Network::segment_no_path(bool need_print)
                     matrix3[rheight][j].insert(matrix1[rheight][rwidth].begin(), matrix1[rheight][rwidth].end());
                 }
             }
-//            if(need_print)
-//                print_matrix(1);
         }
     }
     if (need_print) {
@@ -880,15 +865,12 @@ void Network::segment_based(bool need_print)
             {
                 for(int j = 0; j < width; j++)
                 {
-                    // rheight = i;
-                    // rwidth = j;
                     rheight = minimatrix[i][j][0];
                     rwidth = minimatrix[i][j][1];
                     rmatrix1[rheight][rwidth].delete_all();
                     for(int place = 0; place < width; place++)
                     {
                         tmp.delete_all();
-                        //rplace = place;
                         rplace = minimatrix[0][place][1];
                         if(rplace == rwidth)
                             continue;
@@ -905,15 +887,12 @@ void Network::segment_based(bool need_print)
             {
                 for(int j = 0; j < width; j++)
                 {
-                    // rheight = i;
-                    // rwidth = j;
                     rheight = minimatrix[i][j][0];
                     rwidth = minimatrix[i][j][1];
                     rmatrix2[rheight][rwidth].delete_all();
                     for(int place = 0; place < width; place++)
                     {
                         tmp.delete_all();
-                        //rplace = place;
                         rplace = minimatrix[0][place][1];
                         if(rplace == rwidth)
                             continue;
